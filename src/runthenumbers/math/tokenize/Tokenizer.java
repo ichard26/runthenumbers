@@ -1,6 +1,5 @@
 package runthenumbers.math.tokenize;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
@@ -40,11 +39,13 @@ public class Tokenizer {
                                        (?![a-zA-Z])
                                        """);
         TOKEN_PATTERNS.put("Operator", "[\\+\\-\\*\\/\\^]");
-        TOKEN_PATTERNS.put("Parenthesis", "\\(|\\)");
+        TOKEN_PATTERNS.put("EqualSign", "=");
+        TOKEN_PATTERNS.put("LeftBracket", "\\(");
+        TOKEN_PATTERNS.put("RightBracket", "\\)");
         TOKEN_PATTERNS.put("Whitespace", "\\s");
         TOKEN_PATTERNS.put("Unknown", ".");
         
-        // Combine individual regexes into one single regex in order.
+        // Combine individual regexes into one single regex, in order.
         ArrayList<String> parts = new ArrayList<>();
         TOKEN_PATTERNS.forEach((k, v) -> {
             parts.add(String.format("(?<%s>%s)", k, v));
@@ -62,30 +63,31 @@ public class Tokenizer {
     public TokenStream tokenize(String expression) {
         ArrayList<Token> tokens = new ArrayList<>();
         Matcher matcher = TOKENIZE_PATTERN.matcher(expression);
-        String kind = "", value;
+        String type = "", value = "";
+        Span position;
         
+        // Search expression for matching tokens using combined regex.
         while (matcher.find()) {
             // Determine which group (AKA token type) matched.
-            if ((value = matcher.group("Number")) != null)
-                kind = "Number";
-            else if ((value = matcher.group("Operator")) != null)
-                kind = "Operator";
-            else if ((value = matcher.group("Parenthesis")) != null)
-                kind = "Parenthesis";
-            else if ((value = matcher.group("Whitespace")) != null)
-                kind = "Whitespace";
-            else {
-                assert matcher.group("Unknown") != null;
-                // TODO: raise a proper error
-                throw new Error("unexpected token: " + matcher.group());
+            for (String potentialType : TOKEN_PATTERNS.keySet()) {
+                if ((value = matcher.group(potentialType)) != null) {
+                    type = potentialType; 
+                    break;
+                }
             }
+            position = new Span(matcher.start(), matcher.end());
+            
+            if (type.equals("Unknown"))
+                throw new TokenizeError(
+                        "Unexpected character: " + value, position, expression);
+            
             // Add all matched tokens except for whitespace as they're irrelevant.
-            if (!kind.equals("Whitespace"))
-                tokens.add(new Token(kind, value, new Point(0, 0))); // TODO: handle position
+            if (!type.equals("Whitespace"))
+                tokens.add(new Token(type, value, position));
         }
         
         tokens = fixupTokens(tokens);
-        validateTokens(tokens);
+        validateTokens(tokens, expression);
         return new TokenStream(tokens);
     }
     
@@ -95,15 +97,71 @@ public class Tokenizer {
      * @return 
      */
     private static ArrayList<Token> fixupTokens(ArrayList<Token> tokens) {
-        return tokens;
+        ArrayList<Token> fixedTokens = new ArrayList<>();
+        Token current, next;
+        
+        for (int i = 0; i < tokens.size() - 1; i++) {
+            current = tokens.get(i);
+            next = tokens.get(i+1);
+            
+            fixedTokens.add(current);
+            // Fix-up 1: Add a minus operator between a number and a negative number.
+            if (current.is("Number") 
+                    && next.is("Number") 
+                    && next.getValue().startsWith("-")) {
+                fixedTokens.add(new Token("Operator", "-", new Span(-1, -1)));
+                // Remove the negative sign from the next number token.
+                next.setValue(next.getValue().substring(1));
+            }
+            // Fix-up 2: Add a multiply between adjacent opening/closing brackets.
+            else if (current.is("RightBracket") && next.is("LeftBracket")) {
+                fixedTokens.add(new Token("Operator", "*", new Span(-1, -1)));
+            }
+            // Fix-up 3: Add a multiply between a number and variable.
+            else if (current.is("Number") && next.is("Variable")) {
+                fixedTokens.add(new Token("Operator", "*", new Span(-1, -1)));
+            }
+        }
+        fixedTokens.add(tokens.getLast());
+        
+        return fixedTokens;
     }
     
     /**
      * TODO
      * @param tokens 
      */
-    private static void validateTokens(ArrayList<Token> tokens) {
+    private static void validateTokens(ArrayList<Token> tokens, String originalInput) {
+        Token current, next;
+        ArrayList<Token> equalSigns = new ArrayList<>();
         
+        for (int i = 0; i < tokens.size(); i++) {
+            current = tokens.get(i);
+            if (current.is("EqualSign"))
+                equalSigns.add(current);
+            
+            // The following checks require the next token to be non-null.
+            next = (i+1 < tokens.size()) ? tokens.get(i+1) : null;
+            if (next == null)
+                continue;
+            
+            // Error 1: adjacent operators
+            if (current.is("Operator") && next.is("Operator"))
+                throw new TokenizeError("Adjacent operators", next.getPosition(), originalInput);
+            // Error 2: adjacent numbers
+            if (current.is("Number") && next.is("Number"))
+                throw new TokenizeError("Adjacent numbers", next.getPosition(), originalInput);
+            // Error 3: operator that is not followed by a number, variable, or opening bracket
+            if (current.is("Operator") && !next.is("Number", "Variable", "LeftBracket"))
+                throw new TokenizeError(
+                        next.getType() + " cannot come after an operator", next.getPosition(), originalInput);
+        }
+        
+        // Error 4: more than one equal sign
+        if (equalSigns.size() > 1) {
+            throw new TokenizeError(
+                    "More than one equal sign", equalSigns.get(1).getPosition(), originalInput);
+        }
     }
     
 }

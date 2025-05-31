@@ -20,6 +20,7 @@ public class TestSuite {
      */
     public static boolean run() {
         testBasicEvaluation();
+        testFixups();
         System.out.printf("[self-check] %d passed, %d failed\n", passingCases, failingCases);
         return failingCases == 0;
     }
@@ -42,6 +43,13 @@ public class TestSuite {
         assertEvaluate("1 + 2 * 3 - 4 / 5^2", 6.84);
     }
     
+    public static void testFixups() {
+        assertEvaluate("1-3", -2);
+        assertEvaluate("5-1-1-1-1", 1);
+        assertEvaluate("(5)(2)", 10);
+        // TODO test Nx
+    }
+    
     /**
      * TODO
      * @param input
@@ -49,10 +57,10 @@ public class TestSuite {
      */
     private static void assertEvaluate(String input, double expected) {
         double result = -1000000;
-        Error error = null;
+        Throwable error = null;
         try {
             result = evaluate(input);
-        } catch (Error e) {
+        } catch (Error | RuntimeException e) {
             error = e;
         }
         if (error != null) {
@@ -62,7 +70,7 @@ public class TestSuite {
                                 - Input: %s
                               """, 
                     input);
-            error.printStackTrace();
+            error.printStackTrace(System.out);
             failingCases++;
         }
         else if (result != expected) {

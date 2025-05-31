@@ -46,16 +46,16 @@ public class Parser {
         else if (lhs_token.is("Variable")) {
             lhs = new Variable(lhs_token.getValue());
         }
-        else if (lhs_token.is("Parenthesis") && lhs_token.getValue().equals("(")) {
+        else if (lhs_token.is("LeftBracket")) {
             // We're entering a parenthesized sub-expression (it's recursion time!)
             lhs = new Group(_parseExpression(stream));
-            if (!stream.next().getValue().equals(")"))
+            if (!stream.next().is("RightBracket"))
                 throw new AssertionError("next token should be a closing paren");
         }
         
         while (!stream.onLastToken()) {
             Token op_token = stream.peek();
-            if (op_token.is("Parenthesis") && op_token.getValue().equals(")"))
+            if (op_token.is("RightBracket"))
                 // The sub-expression is finished so stop parsing.
                 break;
             

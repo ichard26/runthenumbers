@@ -1,23 +1,21 @@
 package runthenumbers.math.tokenize;
 
-import java.awt.Point;
-
 /**
  * @date May 25, 2025
  * @author Richard Si
  */
 public class Token {
     private final String type;
-    private final String value;
-    private final Point position;
+    private String value;
+    private final Span position;
 
-    public Token(String kind, String value, Point position) {
+    public Token(String kind, String value, Span position) {
         this.type = kind;
         this.value = value;
         this.position = position;
     }
     
-    // Getters (no setters as this class is intended to be immutable).
+    // Getters and setters (only for value, though).
 
     public String getType() {
         return type;
@@ -27,18 +25,26 @@ public class Token {
         return value;
     }
 
-    public Point getPosition() {
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Span getPosition() {
         return position;
     }
     
     /**
      * Method Name: is
-     * Description: Check if the token is of type X.
-     * @param type The desired type.
-     * @return True if it is the desired type, false otherwise.
+     * Description: Check if the token is of type X, Y, or Z.
+     * @param types The acceptable types.
+     * @return True if it is the one of the desired types, false otherwise.
      */
-    public boolean is(String type) {
-        return this.type.equals(type);
+    public boolean is(String... types) {
+        for (String acceptableType : types) {
+            if (this.type.equals(acceptableType))
+                return true;
+        }
+        return false;
     }
 
     /**
