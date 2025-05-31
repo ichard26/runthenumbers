@@ -7,23 +7,47 @@ import java.awt.Point;
  * @author Richard Si
  */
 public class Token {
-    public final String kind;
-    public final String value;
-    public final Point position;
+    private final String type;
+    private final String value;
+    private final Point position;
 
     public Token(String kind, String value, Point position) {
-        this.kind = kind;
+        this.type = kind;
         this.value = value;
         this.position = position;
     }
     
-    public boolean is(String kind) {
-        return this.kind.equals(kind);
+    // Getters (no setters as this class is intended to be immutable).
+
+    public String getType() {
+        return type;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public Point getPosition() {
+        return position;
+    }
+    
+    /**
+     * Method Name: is
+     * Description: Check if the token is of type X.
+     * @param type The desired type.
+     * @return True if it is the desired type, false otherwise.
+     */
+    public boolean is(String type) {
+        return this.type.equals(type);
+    }
+
+    /**
+     * TODO
+     * @return 
+     */
     @Override
     public String toString() {
-        return "Token{" + "kind=" + kind + ", value=" + value + ", position=" + position + '}';
+        return "Token{" + "kind=" + type + ", value=" + value + ", position=" + position + '}';
     }
     
 }

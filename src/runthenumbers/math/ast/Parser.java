@@ -41,31 +41,31 @@ public class Parser {
         Expression lhs = null, rhs;
         Token lhs_token = stream.next();
         if (lhs_token.is("Number")) {
-            lhs = new Number(Double.parseDouble(lhs_token.value));
+            lhs = new Number(Double.parseDouble(lhs_token.getValue()));
         }
         else if (lhs_token.is("Variable")) {
-            lhs = new Variable(lhs_token.value);
+            lhs = new Variable(lhs_token.getValue());
         }
-        else if (lhs_token.is("Parenthesis") && lhs_token.value.equals("(")) {
+        else if (lhs_token.is("Parenthesis") && lhs_token.getValue().equals("(")) {
             // We're entering a parenthesized sub-expression (it's recursion time!)
             lhs = new Group(_parseExpression(stream));
-            if (!stream.next().value.equals(")"))
+            if (!stream.next().getValue().equals(")"))
                 throw new AssertionError("next token should be a closing paren");
         }
         
         while (!stream.onLastToken()) {
             Token op_token = stream.peek();
-            if (op_token.is("Parenthesis") && op_token.value.equals(")"))
+            if (op_token.is("Parenthesis") && op_token.getValue().equals(")"))
                 // The sub-expression is finished so stop parsing.
                 break;
             
-            BindingPower bp = _infixBindingPower(op_token.value);
+            BindingPower bp = _infixBindingPower(op_token.getValue());
             if (bp.left() < minimumBP)
                 break;
             
             stream.next();
             rhs = _parseExpression(stream, bp.right());
-            lhs = new Operation(lhs, op_token.value, rhs);
+            lhs = new Operation(lhs, op_token.getValue(), rhs);
         }
         
         return lhs;

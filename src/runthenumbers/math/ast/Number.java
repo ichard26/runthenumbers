@@ -28,6 +28,9 @@ public class Number extends Expression {
      */
     @Override
     public String toString() {
+        // The double is also an integer, so don't show the .0
+        if (value % 1 == 0)
+            return Integer.toString(Double.valueOf(value).intValue());
         return Double.toString(value);
     }
 }
