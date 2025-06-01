@@ -1,7 +1,10 @@
 package runthenumbers;
 
+import runthenumbers.utils.PrettyPrinter;
+import runthenumbers.utils.prompt.StringPrompt;
 import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
 import runthenumbers.math.tokenize.TokenStream;
 import runthenumbers.math.tokenize.Tokenizer;
@@ -11,7 +14,7 @@ import runthenumbers.math.tokenize.Tokenizer;
 
 - [x] Port over calculator math implementation
 - [] Extend math impl. to handle variables and equations
-- [] Extend tokenizer and parser with fix-ups and error handling
+- [x] Extend tokenizer and parser with fix-ups and error handling
 - [] DOCUMENTATION (class, methods) & COMMENT CHECKPOINT
 */
 
@@ -32,9 +35,20 @@ public class RunTheNumbers {
             System.exit(1);
         }
         
-//        TokenStream stream = new Tokenizer().tokenize("+ =");
-//        Expression expr = Parser.parse(stream);
-//        double result = Evaluator.evaluate(expr);
+        String input;
+        while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
+            TokenStream stream = new Tokenizer().tokenize(input);
+            ParseResult result = Parser.parse(stream);
+            if (result instanceof Expression expr) {
+                new PrettyPrinter().print(result);
+                System.out.println("Result: " + Evaluator.evaluate(expr));
+            }
+            else {
+                new PrettyPrinter().print(result);
+            }
+            System.out.println();
+        }
+
     }
     
 }

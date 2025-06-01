@@ -20,10 +20,9 @@ public class Parser {
      * @param stream
      * @return 
      */
-    public static Expression parse(TokenStream stream) {
+    public static ParseResult parse(TokenStream stream) {
         Expression expr = _parseExpression(stream);
-        if (!stream.isExhausted())
-            throw new AssertionError("did not consume all tokens");
+        assert stream.isExhausted() : "did not consume all tokens";
         return expr;
     }
     
@@ -50,13 +49,13 @@ public class Parser {
             // We're entering a parenthesized sub-expression (it's recursion time!)
             lhs = new Group(_parseExpression(stream));
             if (!stream.next().is("RightBracket"))
-                throw new AssertionError("next token should be a closing paren");
+                throw new AssertionError("next token should be a closing bracket");
         }
         
         while (!stream.onLastToken()) {
             Token op_token = stream.peek();
             if (op_token.is("RightBracket"))
-                // The sub-expression is finished so stop parsing.
+                // The sub-expression is finished so return the LHS now.
                 break;
             
             BindingPower bp = _infixBindingPower(op_token.getValue());

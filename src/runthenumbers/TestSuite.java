@@ -1,7 +1,9 @@
 package runthenumbers;
 
+import runthenumbers.utils.PrettyPrinter;
 import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
 import runthenumbers.math.tokenize.TokenStream;
 import runthenumbers.math.tokenize.Tokenizer;
@@ -95,7 +97,10 @@ public class TestSuite {
      */
     private static double evaluate(String input) {
         TokenStream stream = new Tokenizer().tokenize(input);
-        Expression expr = Parser.parse(stream);
-        return Evaluator.evaluate(expr);
+        ParseResult result = Parser.parse(stream);
+        if (result instanceof Expression expr)
+            return Evaluator.evaluate(expr);
+        
+        throw new Error("Expected expression, got equation!");
     }
 }

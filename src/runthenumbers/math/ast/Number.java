@@ -1,11 +1,13 @@
 package runthenumbers.math.ast;
 
+import runthenumbers.utils.PrettyPrintable;
+
 /**
  * TODO
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Number extends Expression {
+public class Number extends Expression implements PrettyPrintable {
     private double value;
 
     public Number(double value) {
@@ -33,4 +35,10 @@ public class Number extends Expression {
             return Integer.toString(Double.valueOf(value).intValue());
         return Double.toString(value);
     }
+
+    @Override
+    public String toPrettyString() {
+        return "Number(" + toString() + ")";
+    }
+    
 }

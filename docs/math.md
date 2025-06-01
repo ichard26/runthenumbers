@@ -9,7 +9,9 @@
 ```plantuml
 start
 :Math Input;
-:Tokenization;
+:Initial tokenization;
+:Apply adjustments to tokens;
+:Validate token stream;
 :Parse into AST;
 stop
 ```

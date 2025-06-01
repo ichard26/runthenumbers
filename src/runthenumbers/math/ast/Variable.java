@@ -1,10 +1,12 @@
 package runthenumbers.math.ast;
 
+import runthenumbers.utils.PrettyPrintable;
+
 /**
  * TODO
  * @author Richard Si
  */
-public class Variable extends Expression {
+public class Variable extends Expression implements PrettyPrintable {
     private String name;
 
     public Variable(String name) {
@@ -29,4 +31,9 @@ public class Variable extends Expression {
     public String toString() {
         return name;
     }
+
+    @Override
+    public String toPrettyString() {
+        return "Variable(" + name + ")";
+    }   
 }

@@ -4,7 +4,7 @@ package runthenumbers.math.ast;
  * TODO
  * @author Richard Si
  */
-public class Equation {
+public final class Equation implements ParseResult {
     private Expression left;
     private Expression right;
 

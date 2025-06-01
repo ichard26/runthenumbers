@@ -16,7 +16,7 @@ public class Evaluator {
      * @param expr
      * @return 
      */
-    public static double evaluate(Expression expr) {
+    public static double evaluate(Expression expr) {        
         if (expr instanceof Operation op) {
             double left = evaluate(op.getLeft());
             double right = evaluate(op.getRight());

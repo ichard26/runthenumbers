@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/ParseResult.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/TestSuite.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/Parser.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumber/utils/PrettyPrinter.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/tokenize/TokenStream.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/Evaluator.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumber/utils/Random.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/Group.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/Equation.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/Number.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/RunTheNumbers.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/Variable.java</file>
+            <file>file:/home/ichard26/dev/java/RunTheNumbers/src/runthenumbers/math/ast/Expression.java</file>
+        </group>
+    </open-files>
+</project-private>
