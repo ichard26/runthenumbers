@@ -6,16 +6,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * TODO
- * @date May 30, 2025
- * @author Richard Si
+ * Class Name: Tokenizer
+ * Description: Handles splitting a math expression into its constituent tokens.
+ * Programmer: Richard Si
+ * Date: May 25, 2025
  */
 public class Tokenizer {
-    // LinkedHashMap maintains insertion order.
-    private final LinkedHashMap<String, String> TOKEN_PATTERNS = new LinkedHashMap<>();
-    private final Pattern TOKENIZE_PATTERN;
+    // LinkedHashMap maintains insertion order, needed for proper tokenization.
+    private static final LinkedHashMap<String, String> TOKEN_PATTERNS = new LinkedHashMap<>();
+    private static final Pattern TOKENIZE_PATTERN;
     
-    public Tokenizer() {
+    static {
         TOKEN_PATTERNS.put("Number", """
                                      # Negative sign.
                                      [\\-]?
@@ -56,11 +57,12 @@ public class Tokenizer {
     }
     
     /**
-     * TODO
-     * @param expression
-     * @return 
+     * Method Name: tokenize
+     * Description: Split a math expression into its constituent tokens.
+     * @param expression The math expression to tokenize.
+     * @return A stream of parsed tokens.
      */
-    public TokenStream tokenize(String expression) {
+    public static TokenStream tokenize(String expression) {
         ArrayList<Token> tokens = new ArrayList<>();
         Matcher matcher = TOKENIZE_PATTERN.matcher(expression);
         String type = "", value = "";
@@ -92,9 +94,11 @@ public class Tokenizer {
     }
     
     /**
-     * TODO
-     * @param tokens
-     * @return 
+     * Method Name: fixupTokens
+     * Description: Apply adjustments to tokens to replace unsupported syntax
+     *               with the supported standard form.
+     * @param tokens the array of tokens to fix.
+     * @return the array of fixed tokens.
      */
     private static ArrayList<Token> fixupTokens(ArrayList<Token> tokens) {
         ArrayList<Token> fixedTokens = new ArrayList<>();
@@ -105,20 +109,21 @@ public class Tokenizer {
             next = tokens.get(i+1);
             
             fixedTokens.add(current);
-            // Fix-up 1: Add a minus operator between a number and a negative number.
-            if (current.is("Number") 
+            // Fix-up 1: Replace a negative number with a subtraction operator
+            //           if followed by a number/variable/opening bracket.
+            if (current.is("Number", "Variable", "RightBracket")
                     && next.is("Number") 
                     && next.getValue().startsWith("-")) {
                 fixedTokens.add(new Token("Operator", "-", new Span(-1, -1)));
                 // Remove the negative sign from the next number token.
                 next.setValue(next.getValue().substring(1));
             }
-            // Fix-up 2: Add a multiply between adjacent opening/closing brackets.
+            // Fix-up 2: Add a multiply between adjacent closing/opening brackets.
             else if (current.is("RightBracket") && next.is("LeftBracket")) {
                 fixedTokens.add(new Token("Operator", "*", new Span(-1, -1)));
             }
-            // Fix-up 3: Add a multiply between a number and variable.
-            else if (current.is("Number") && next.is("Variable")) {
+            // Fix-up 3: Add a multiply between a number/opening bracket and variable.
+            else if (current.is("Number") && next.is("Variable", "LeftBracket")) {
                 fixedTokens.add(new Token("Operator", "*", new Span(-1, -1)));
             }
         }
@@ -128,8 +133,9 @@ public class Tokenizer {
     }
     
     /**
-     * TODO
-     * @param tokens 
+     * Method Name: validateTokens
+     * Description: Search for nonsense token sequences, raising an error if found.
+     * @param tokens The array of tokens to validate.
      */
     private static void validateTokens(ArrayList<Token> tokens, String originalInput) {
         Token current, next;
@@ -159,6 +165,7 @@ public class Tokenizer {
         
         // Error 4: more than one equal sign
         if (equalSigns.size() > 1) {
+            // Place the error caret at the second equal sign.
             throw new TokenizeError(
                     "More than one equal sign", equalSigns.get(1).getPosition(), originalInput);
         }

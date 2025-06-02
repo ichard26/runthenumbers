@@ -3,8 +3,10 @@ package runthenumbers.math.tokenize;
 import java.util.List;
 
 /**
- * TODO
- * @author Richard Si
+ * Class Name: TokenizeError
+ * Description: Error subclass raised when a math expression is invalid.
+ * Programmer: Richard Si
+ * Date: May 31, 2025
  */
 public class TokenizeError extends RuntimeException {
     private final String message;
@@ -20,7 +22,7 @@ public class TokenizeError extends RuntimeException {
         // Format a friendly error for unexpected tokens.
         // Also show the original input and point to the first bad character.
         String original = "  " + fullInput;
-        String pointer = " ".repeat(position.getStart() + 2) + "^";
+        String pointer = " ".repeat(position.getStart() + 1) + "~^~";
         formattedError = String.join("\n", List.of(message, original, pointer));
     }
 
@@ -34,6 +36,11 @@ public class TokenizeError extends RuntimeException {
         return fullInput;
     }
     
+    /**
+     * Method Name: getMessage
+     * Description: Provide an alternative error message for custom Error.
+     * @return the primary error message used by Java's traceback.
+     */
     @Override
     public String getMessage() {
         return formattedError;

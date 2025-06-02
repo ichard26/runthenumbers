@@ -1,8 +1,10 @@
 package runthenumbers.math.tokenize;
 
 /**
- * @date May 25, 2025
- * @author Richard Si
+ * Class Name: Token
+ * Description: A constituent portion of a math expression.
+ * Programmer: Richard Si
+ * Date: May 25, 2025
  */
 public class Token {
     private final String type;
@@ -48,12 +50,13 @@ public class Token {
     }
 
     /**
-     * TODO
-     * @return 
+     * Method Name: toString
+     * Description: Format token in a human friendly way.
+     * @return The human-friendly string presentation of the token.
      */
     @Override
     public String toString() {
-        return "Token{" + "kind=" + type + ", value=" + value + ", position=" + position + '}';
+        return "Token(" + "kind=" + type + ", value=" + value + ", position=" + position + ')';
     }
     
 }

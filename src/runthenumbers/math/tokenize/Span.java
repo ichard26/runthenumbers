@@ -1,8 +1,10 @@
 package runthenumbers.math.tokenize;
 
 /**
- * TODO
- * @author Richard Si
+ * Class Name: Span
+ * Description: Simple 2-item tuple for storing start and end indices.
+ * Programmer: Richard Si
+ * Date: May 31, 2025
  */
 public class Span {
     private final int start;
@@ -21,6 +23,16 @@ public class Span {
 
     public int getEnd() {
         return end;
+    }
+    
+    /**
+     * Method Name: toString
+     * Description: Format span in a human friendly way.
+     * @return The human-friendly string presentation of the span.
+     */
+    @Override
+    public String toString() {
+        return "(" + start + ", " + end + ")";
     }
     
 }

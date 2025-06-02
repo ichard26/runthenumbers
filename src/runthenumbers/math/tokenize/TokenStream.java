@@ -37,4 +37,21 @@ public class TokenStream {
     public void reset() {
         index = 0;
     }
+    
+    public TokenStream[] split(String onType) {
+        ArrayList<ArrayList<Token>> sections = new ArrayList<>();
+        sections.add(new ArrayList<>());
+        for (Token t : tokens) {
+            if (t.is(onType))
+                sections.add(new ArrayList<>());
+            else
+                sections.getLast().add(t);
+        }
+        
+        TokenStream[] substreams = new TokenStream[sections.size()];
+        for (int i = 0; i < sections.size(); i++)
+            substreams[i] = new TokenStream(sections.get(i));
+        
+        return substreams;
+    }
 }
