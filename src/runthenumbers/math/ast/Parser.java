@@ -2,6 +2,7 @@ package runthenumbers.math.ast;
 
 import runthenumbers.math.tokenize.Token;
 import runthenumbers.math.tokenize.TokenStream;
+import runthenumbers.math.tokenize.Tokenizer;
 
 /**
  * TODO
@@ -14,13 +15,31 @@ record BindingPower(int left, int right) {};
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Parser {    
+public class Parser {
+    /**
+     * 
+     * @param input
+     * @return 
+     */
+    public static ParseResult parse(String input) {
+        return parse(Tokenizer.tokenize(input));
+    }
+    
     /**
      * TODO
      * @param stream
      * @return 
      */
     public static ParseResult parse(TokenStream stream) {
+        TokenStream[] substreams = stream.split("EqualSign");
+        // If there's an equal sign, parse each side of the eqn separately.
+        if (substreams.length > 1) {
+            assert substreams.length == 2 : "there should only be a left and right side";
+            Expression leftExpr = _parseExpression(substreams[0]);
+            Expression rightExpr = _parseExpression(substreams[1]);
+            return new Equation(leftExpr, rightExpr);
+        }
+        
         Expression expr = _parseExpression(stream);
         assert stream.isExhausted() : "did not consume all tokens";
         return expr;

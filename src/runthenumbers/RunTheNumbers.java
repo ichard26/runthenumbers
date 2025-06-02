@@ -6,8 +6,6 @@ import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
-import runthenumbers.math.tokenize.TokenStream;
-import runthenumbers.math.tokenize.Tokenizer;
 
 /*
 [TODO LIST]
@@ -37,8 +35,7 @@ public class RunTheNumbers {
         
         String input;
         while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
-            TokenStream stream = new Tokenizer().tokenize(input);
-            ParseResult result = Parser.parse(stream);
+            ParseResult result = Parser.parse(input);
             if (result instanceof Expression expr) {
                 new PrettyPrinter().print(result);
                 System.out.println("Result: " + Evaluator.evaluate(expr));
