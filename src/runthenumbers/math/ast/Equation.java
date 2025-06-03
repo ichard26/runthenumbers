@@ -1,5 +1,7 @@
 package runthenumbers.math.ast;
 
+import java.util.Objects;
+
 /**
  * TODO
  * @author Richard Si
@@ -38,6 +40,14 @@ public final class Equation implements ParseResult {
     @Override
     public String toString() {
         return left.toString() + " = " + right.toString();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Equation other)
+            return this.left.equals(other.left) && this.right.equals(other.right);
+        
+        return false;
     }
     
 }

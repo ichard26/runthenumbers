@@ -4,6 +4,7 @@ import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
+import runthenumbers.math.solve.Simplifier;
 
 /**
  * TODO
@@ -17,10 +18,16 @@ public class TestSuite {
      * TODO
      * @return 
      */
-    public static boolean run() {
+    public static boolean runSelfCheck() {
+        log("testing evaluation");
         testBasicEvaluation();
+        log("testing fix-ups");
         testFixups();
-        System.out.printf("[self-check] %d passed, %d failed\n", passingCases, failingCases);
+        log("testing simplification");
+        testSimplification();
+        log("testing linear solver");
+        testLinearSolver();
+        log("verdict: %d passed, %d failed", passingCases, failingCases);
         return failingCases == 0;
     }
     
@@ -46,7 +53,33 @@ public class TestSuite {
         assertEvaluate("1-3", -2);
         assertEvaluate("5-1-1-1-1", 1);
         assertEvaluate("(5)(2)", 10);
-        // TODO test Nx
+        assertEvaluate("5(3)", 15);
+        // TODO test Nx, x-N
+    }
+    
+    public static void testSimplification() {
+        // Without variables. Constant folding will simplify these down to a number.
+        assertSimplify("1-3", "-2");
+        assertSimplify("7 + 3*2", "13");
+        assertSimplify("(1 + 2 + 3) * (-1 - 2 - 3)", "-36");
+        assertSimplify("2 + 10^3 - 3", "999");
+        assertSimplify("2^2^2", "16");
+        assertSimplify("1 + 2 * 3 - 4 / 5^2", "6.84");
+        // With variables, with add/subtract.
+        assertSimplify("5x + 2*3", "5x + 6");
+        assertSimplify("x + 5(2*4)", "x + 40");
+        // With variables, with multiply/divide.
+        assertSimplify("5x * 3 * 3", "45x");
+        assertSimplify("10 * x * 10", "100x");
+        // With variables, with brackets.
+        assertSimplify("x + (5 + 2)", "x + 7");
+        assertSimplify("x + (5 + 2) * 2", "x + 14");
+        assertSimplify("10 + x + (5 + 2) * 2", "24 + x");
+        assertSimplify("10 + x + (2x)*2", "10 + 5x");
+    }
+    
+    public static void testLinearSolver() {
+        
     }
     
     /**
@@ -87,6 +120,24 @@ public class TestSuite {
         }
     }
     
+    private static void assertSimplify(String input, String expected) {
+        ParseResult actualResult = Simplifier.simplify(Parser.parse(input));
+        ParseResult expectedResult = Parser.parse(expected);
+        if (!actualResult.equals(expectedResult)) {
+            System.out.printf("""
+                      [ERROR] simplification
+                        - Input: %s
+                        - Expected: %s
+                        - Actual: %s
+                      """, 
+                    input, expectedResult.toString(), actualResult.toString());
+            failingCases++;
+        }
+        else {
+            passingCases++;
+        }
+    }
+    
     /**
      * TODO
      * @param input
@@ -99,4 +150,9 @@ public class TestSuite {
         
         throw new Error("Expected expression, got equation!");
     }
+    
+    private static void log(String template, Object... args) {
+        System.out.printf("[self-check] " + template + "\n", args);
+    }
+    
 }

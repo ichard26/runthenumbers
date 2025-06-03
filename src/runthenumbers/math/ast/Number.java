@@ -41,4 +41,11 @@ public class Number extends Expression implements PrettyPrintable {
         return "Number(" + toString() + ")";
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Number other)
+            return this.value == other.value;
+        
+        return false;
+    }
 }

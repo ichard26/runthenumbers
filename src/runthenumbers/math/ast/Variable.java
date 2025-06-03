@@ -31,6 +31,14 @@ public class Variable extends Expression implements PrettyPrintable {
     public String toString() {
         return name;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Variable other)
+            return this.name.equals(other.name);
+        
+        return false;
+    }
 
     @Override
     public String toPrettyString() {

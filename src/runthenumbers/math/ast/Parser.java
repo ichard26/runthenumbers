@@ -31,6 +31,7 @@ public class Parser {
      * @return 
      */
     public static ParseResult parse(TokenStream stream) {
+        // TODO: flag expressions with variables
         TokenStream[] substreams = stream.split("EqualSign");
         // If there's an equal sign, parse each side of the eqn separately.
         if (substreams.length > 1) {

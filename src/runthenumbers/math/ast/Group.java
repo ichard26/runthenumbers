@@ -31,4 +31,11 @@ public class Group extends Expression {
         return "(" + body + ')';
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Group other)
+            return this.body.equals(other.body);
+        
+        return false;
+    }
 }

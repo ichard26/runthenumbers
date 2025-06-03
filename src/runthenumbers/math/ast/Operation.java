@@ -42,6 +42,13 @@ public class Operation extends Expression {
         this.right = right;
     }
     
+    public boolean is(String... operators) {
+        for (String op : operators)
+            if (op.equals(this.operator))
+                return true;
+        return false;
+    }
+    
     /**
      * TODO
      * @return 
@@ -49,11 +56,23 @@ public class Operation extends Expression {
     @Override
     public String toString() {
         // Present N*x or x*N as Nx.
-        if (left instanceof Number && right instanceof Variable)
-            return left.toString() + right;
-        if (left instanceof Variable && right instanceof Number)
-            return right.toString() + left;
+        if (is("*")) {
+            if (left instanceof Number && right instanceof Variable)
+                return left.toString() + right;
+            if (left instanceof Variable && right instanceof Number)
+                return right.toString() + left;
+        }
         
         return left.toString() + " " + operator + " " + right;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Operation other)
+            return this.left.equals(other.left) 
+                    && this.operator.equals(other.operator)
+                    && this.right.equals(other.right);
+        
+        return this == obj;
     }
 }
