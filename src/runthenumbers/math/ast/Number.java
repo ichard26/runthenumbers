@@ -7,7 +7,7 @@ import runthenumbers.utils.PrettyPrintable;
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Number extends Expression implements PrettyPrintable {
+public final class Number extends ExprNode implements PrettyPrintable {
     private double value;
 
     public Number(double value) {

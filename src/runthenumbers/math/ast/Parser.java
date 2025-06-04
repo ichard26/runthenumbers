@@ -16,7 +16,7 @@ record BindingPower(int left, int right) {};
  * @author Richard Si
  */
 public class Parser {
-    public static void updateParents(Expression expr, ParseResult containingExpr) {
+    public static void updateParents(ExprNode expr, Node containingExpr) {
         expr.setParent(containingExpr);
         if (expr instanceof Operation op) {
             updateParents(op.getLeft(), op);
@@ -31,7 +31,7 @@ public class Parser {
      * @param input
      * @return 
      */
-    public static ParseResult parse(String input) {
+    public static RootNode parse(String input) {
         return parse(Tokenizer.tokenize(input));
     }
     
@@ -40,27 +40,28 @@ public class Parser {
      * @param stream
      * @return 
      */
-    public static ParseResult parse(TokenStream stream) {
+    public static RootNode parse(TokenStream stream) {
         // TODO: flag expressions with variables
         TokenStream[] substreams = stream.split("EqualSign");
         // If there's an equal sign, parse each side of the eqn separately.
         if (substreams.length > 1) {
             assert substreams.length == 2 : "there should only be a left and right side";
-            Expression leftExpr = _parseExpression(substreams[0]);
-            Expression rightExpr = _parseExpression(substreams[1]);
+            ExprNode leftExpr = _parseExpression(substreams[0]);
+            ExprNode rightExpr = _parseExpression(substreams[1]);
             Equation eqn = new Equation(leftExpr, rightExpr);
             updateParents(leftExpr, eqn);
             updateParents(rightExpr, eqn);
             return eqn;
         }
         
-        Expression expr = _parseExpression(stream);
-        updateParents(expr, null);
+        ExprNode innerExpr = _parseExpression(stream);
+        Expression expr = new Expression(innerExpr);
+        updateParents(innerExpr, expr);
         assert stream.isExhausted() : "did not consume all tokens";
         return expr;
     }
     
-    private static Expression _parseExpression(TokenStream stream) {
+    private static ExprNode _parseExpression(TokenStream stream) {
         return _parseExpression(stream, 0);
     }
     
@@ -69,9 +70,10 @@ public class Parser {
      * @param minimumBP
      * @return 
      */
-    private static Expression _parseExpression(TokenStream stream, int minimumBP) {
+    private static ExprNode _parseExpression(TokenStream stream, int minimumBP) {
         // NOTE: LHS = left hand side, RHS = right hand side.
-        Expression lhs = null, rhs;
+        ExprNode lhs = null;
+        ExprNode rhs;
         Token lhs_token = stream.next();
         if (lhs_token.is("Number")) {
             lhs = new Number(Double.parseDouble(lhs_token.getValue()));

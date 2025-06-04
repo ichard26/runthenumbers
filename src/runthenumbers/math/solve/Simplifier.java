@@ -1,15 +1,15 @@
 package runthenumbers.math.solve;
 
 import java.util.ArrayList;
-import java.util.List;
 import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Equation;
-import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.ExprNode;
 import runthenumbers.math.ast.Group;
 import runthenumbers.math.ast.Number;
 import runthenumbers.math.ast.Operation;
-import runthenumbers.math.ast.ParseResult;
-import runthenumbers.utils.PrettyPrinter;
+import runthenumbers.math.ast.Node;
+import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.RootNode;
 
 /**
  * TODO
@@ -17,23 +17,17 @@ import runthenumbers.utils.PrettyPrinter;
  * @author Richard Si
  */
 public class Simplifier {
-    public static void simplify(ParseResult exprOrEqn) {
+    public static void simplify(RootNode exprOrEqn) {
         switch (exprOrEqn) {
-            case Equation eqn -> simplify(eqn);
-            case Expression eqn -> simplify(eqn);
+            case Equation eqn -> {
+                foldConstantExpr(eqn.getLeft());
+                foldConstantExpr(eqn.getRight());
+            }
+            case Expression expr -> foldConstantExpr(expr.getBody());
         }
     }
-    
-    public static void simplify(Equation eqn) {
-        simplify(eqn.getLeft());
-        simplify(eqn.getRight());
-    }
-    
-    public static void simplify(Expression expr) {
-        foldConstantExpr(expr);
-    }
 
-    private static void foldConstantExpr(Expression expr) {
+    private static void foldConstantExpr(ExprNode expr) {
         // Walk expression AST recursively for operations that contains
         // constant operands. Matching operations are replaced with
         // number nodes.
@@ -59,7 +53,7 @@ public class Simplifier {
         collectLikeTerms(expr);
     }
     
-    private static ArrayList<Operation> findLikeTerms(Expression expr) {
+    private static ArrayList<Operation> findLikeTerms(ExprNode expr) {
         ArrayList<Operation> addMinusTerms = new ArrayList<>();
         // Addition/subtraction are associative, thus we can collect and
         // fold them into a single term. 
@@ -76,8 +70,8 @@ public class Simplifier {
     }
     
     private static Number getConstantFromOperation(Operation op) {
-        Expression left = op.getLeft();
-        Expression right = op.getRight();
+        ExprNode left = op.getLeft();
+        ExprNode right = op.getRight();
         if (left instanceof Number leftNumber)
             return leftNumber;
         
@@ -90,15 +84,16 @@ public class Simplifier {
         return rightNumber;
     }
     
-    private static void replaceNode(Expression original, Expression replacement) {
-        ParseResult parent = original.getParent();
+    private static void replaceNode(ExprNode original, ExprNode replacement) {
+        Node parent = original.getParent();
         
         replacement.setParent(parent);
         if (parent instanceof Group parentGroup)
             parentGroup.setBody(replacement);
         else if (parent instanceof Operation parentOp) {
-            if (original == parentOp.getLeft())
+            if (original == parentOp.getLeft()) {
                 parentOp.setLeft(replacement);
+            }
             else {
                 assert original == parentOp.getRight() : "is a child but not an operand?!";
                 parentOp.setRight(replacement);
@@ -113,13 +108,16 @@ public class Simplifier {
                 parentEqn.setRight(replacement);
             }
         }
+        else if (parent instanceof Expression parentExpr) {
+            parentExpr.setBody(replacement);
+        }
         else {
             throw new AssertionError("Only group/operation can be parents.");
         }
     }
     
-    private static void removeNode(Expression node) {
-        ParseResult parent = node.getParent();
+    private static void removeNode(ExprNode node) {
+        Node parent = node.getParent();
         if (parent instanceof Group group) {
             // These brackets will be empty, thus remove the group entirely.
             removeNode(group);
@@ -129,23 +127,26 @@ public class Simplifier {
                 // Removing the left operand.
                 if (parentOp.is("+")) {
                     replaceNode(parentOp, parentOp.getRight());
-                }
+                } 
+                else
+                    throw new RuntimeException("not implemented yet");
                     
                 return;
             }
             // Removing the right operand.
             assert node == parentOp.getRight() : "is a child but not an operand?!";
             if (parentOp.is("+")) {
-                System.out.println("replacing (rhs) " + parentOp + " " + parentOp.getLeft());
                 replaceNode(parentOp, parentOp.getLeft());
             }
+            else
+                throw new RuntimeException("not implemented yet");
             return;
         }
         
         throw new AssertionError("Only group/operation can be parents.");
     }
     
-    private static void collectLikeTerms(Expression expr) {
+    private static void collectLikeTerms(ExprNode expr) {
         ArrayList<Operation> terms = findLikeTerms(expr);
         if (terms.isEmpty())
             return;

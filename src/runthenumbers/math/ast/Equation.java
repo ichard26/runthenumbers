@@ -4,30 +4,30 @@ package runthenumbers.math.ast;
  * TODO
  * @author Richard Si
  */
-public final class Equation implements ParseResult {
-    private Expression left;
-    private Expression right;
+public final class Equation extends RootNode {
+    private ExprNode left;
+    private ExprNode right;
 
-    public Equation(Expression left, Expression right) {
+    public Equation(ExprNode left, ExprNode right) {
         this.left = left;
         this.right = right;
     }
     
     // Getters and setters.
 
-    public Expression getLeft() {
+    public ExprNode getLeft() {
         return left;
     }
 
-    public void setLeft(Expression left) {
+    public void setLeft(ExprNode left) {
         this.left = left;
     }
 
-    public Expression getRight() {
+    public ExprNode getRight() {
         return right;
     }
 
-    public void setRight(Expression right) {
+    public void setRight(ExprNode right) {
         this.right = right;
     }
     

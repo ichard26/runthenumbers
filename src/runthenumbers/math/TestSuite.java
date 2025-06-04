@@ -1,9 +1,9 @@
 package runthenumbers.math;
 
-import runthenumbers.math.ast.Expression;
-import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
 import runthenumbers.math.solve.Simplifier;
+import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.RootNode;
 
 /**
  * TODO
@@ -68,19 +68,22 @@ public class TestSuite {
         // With variables, with add/subtract.
         assertSimplify("5x + 2*3", "5x + 6");
         assertSimplify("x + 5(2*4)", "x + 40");
-//        assertSimplify("5x + 5 + 5", "5x + 10");
+        assertSimplify("5x + 5 + 5", "5x + 10");
         // With variables, with multiply/divide.
 //        assertSimplify("5x * 3 * 3", "45x");
 //        assertSimplify("10 * x * 10", "100x");
         // With variables, with brackets.
         assertSimplify("x + (5 + 2)", "x + 7");
         assertSimplify("x + (5 + 2) * 2", "x + 14");
-//        assertSimplify("10 + x + (5 + 2) * 2", "24 + x");
+        assertSimplify("10 + x + (5 + 2) * 2", "24 + x");
+        assertSimplify("(x +3-2) + (2*3x)", "(x + 1) + (6x)");
 //        assertSimplify("10 + x + (2x)*2", "10 + 5x");
     }
     
     public static void testSimplificationEquation() {
         assertSimplify("5 + 4 = x", "9 = x");
+        assertSimplify("1*2*3 = 3*2*1", "6 = 6");
+        assertSimplify("1 + ((x)) + 3 = 10^2", "4 + x = 100");
     }
     
     
@@ -127,8 +130,8 @@ public class TestSuite {
     }
     
     private static void assertSimplify(String input, String expected) {
-        ParseResult actualResult = Parser.parse(input);
-        ParseResult expectedResult = Parser.parse(expected);
+        RootNode actualResult = Parser.parse(input);
+        RootNode expectedResult = Parser.parse(expected);
         Simplifier.simplify(actualResult);
         if (!actualResult.equals(expectedResult)) {
             System.out.printf("""
@@ -151,7 +154,7 @@ public class TestSuite {
      * @return 
      */
     private static double evaluate(String input) {
-        ParseResult result = Parser.parse(input);
+        RootNode result = Parser.parse(input);
         if (result instanceof Expression expr)
             return Evaluator.evaluate(expr);
         

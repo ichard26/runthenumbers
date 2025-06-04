@@ -5,10 +5,10 @@ import runthenumbers.utils.PrettyPrinter;
 import runthenumbers.utils.prompt.StringPrompt;
 import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Equation;
-import runthenumbers.math.ast.Expression;
-import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
 import runthenumbers.math.solve.Simplifier;
+import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.RootNode;
 
 /*
 [TODO LIST]
@@ -34,21 +34,21 @@ public class RunTheNumbers {
      */
     public static void main(String[] args) {
         // Run test suite before starting the application.
-        boolean passed = true || TestSuite.runSelfCheck();
+        boolean passed = TestSuite.runSelfCheck();
         if (!passed) {
             System.out.println("[ERROR] self-check failed, aborting...");
             System.exit(1);
         }
         
-        ParseResult ast = Parser.parse("5-1");
-        new PrettyPrinter().print(ast);
-        Simplifier.simplify(ast);
-        new PrettyPrinter().print(ast);
-        System.out.println(ast);
+//        RootNode ast = Parser.parse("7 + 3*2");
+//        new PrettyPrinter().print(ast);
+//        Simplifier.simplify(ast);
+//        new PrettyPrinter().print(ast);
+//        System.out.println(ast);
         
         String input;
-        while (false && !(input = new StringPrompt(">>>").ask()).isBlank()) {
-            ParseResult result = Parser.parse(input);
+        while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
+            RootNode result = Parser.parse(input);
             if (result instanceof Expression expr) {
                 new PrettyPrinter().print(result);
                 Simplifier.simplify(expr);

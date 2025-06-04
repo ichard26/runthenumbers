@@ -5,20 +5,20 @@ package runthenumbers.math.ast;
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Group extends Expression {
-    private Expression body;
+public final class Group extends ExprNode {
+    private ExprNode body;
 
-    public Group(Expression body) {
+    public Group(ExprNode body) {
         this.body = body;
     }
 
     // Getters and setters.
     
-    public Expression getBody() {
+    public ExprNode getBody() {
         return body;
     }
 
-    public void setBody(Expression body) {
+    public void setBody(ExprNode body) {
         this.body = body;
     }
 

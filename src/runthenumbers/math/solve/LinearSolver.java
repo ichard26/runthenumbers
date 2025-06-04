@@ -1,7 +1,7 @@
 package runthenumbers.math.solve;
 
 import runthenumbers.math.ast.Equation;
-import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.ExprNode;
 import runthenumbers.math.ast.Number;
 
 /**
@@ -18,7 +18,7 @@ public class LinearSolver implements Solver {
 
     @Override
     public double solve(Equation eqn) {
-        Expression left = eqn.getLeft();
+        ExprNode left = eqn.getLeft();
         Number right = (Number)eqn.getRight();
         return right.getValue();
     }

@@ -5,12 +5,12 @@ package runthenumbers.math.ast;
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Operation extends Expression {
-    private Expression left;
+public final class Operation extends ExprNode {
+    private ExprNode left;
     private String operator;
-    private Expression right;
+    private ExprNode right;
 
-    public Operation(Expression left, String operator, Expression right) {
+    public Operation(ExprNode left, String operator, ExprNode right) {
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -18,11 +18,11 @@ public class Operation extends Expression {
 
     // Getters and setters.
     
-    public Expression getLeft() {
+    public ExprNode getLeft() {
         return left;
     }
 
-    public void setLeft(Expression left) {
+    public void setLeft(ExprNode left) {
         this.left = left;
     }
 
@@ -34,11 +34,11 @@ public class Operation extends Expression {
         this.operator = operator;
     }
 
-    public Expression getRight() {
+    public ExprNode getRight() {
         return right;
     }
 
-    public void setRight(Expression right) {
+    public void setRight(ExprNode right) {
         this.right = right;
     }
     

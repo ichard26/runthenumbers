@@ -1,6 +1,7 @@
 package runthenumbers.math;
 
 import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.ExprNode;
 import runthenumbers.math.ast.Group;
 import runthenumbers.math.ast.Operation;
 import runthenumbers.math.ast.Number;
@@ -11,12 +12,16 @@ import runthenumbers.math.ast.Number;
  * @author Richard Si
  */
 public class Evaluator {
+    public static double evaluate(Expression expr) {
+        return evaluate(expr.getBody());
+    }
+    
     /**
      * TODO
      * @param expr
      * @return 
      */
-    public static double evaluate(Expression expr) {        
+    public static double evaluate(ExprNode expr) {        
         if (expr instanceof Operation op) {
             double left = evaluate(op.getLeft());
             double right = evaluate(op.getRight());

@@ -6,7 +6,7 @@ import runthenumbers.utils.PrettyPrintable;
  * TODO
  * @author Richard Si
  */
-public class Variable extends Expression implements PrettyPrintable {
+public final class Variable extends ExprNode implements PrettyPrintable {
     private String name;
 
     public Variable(String name) {
