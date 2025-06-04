@@ -1,6 +1,8 @@
 package runthenumbers.math.solve;
 
 import runthenumbers.math.ast.Equation;
+import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.Number;
 
 /**
  * TODO
@@ -16,7 +18,9 @@ public class LinearSolver implements Solver {
 
     @Override
     public double solve(Equation eqn) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Expression left = eqn.getLeft();
+        Number right = (Number)eqn.getRight();
+        return right.getValue();
     }
     
 }

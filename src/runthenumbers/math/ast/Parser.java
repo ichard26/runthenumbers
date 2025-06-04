@@ -16,6 +16,16 @@ record BindingPower(int left, int right) {};
  * @author Richard Si
  */
 public class Parser {
+    public static void updateParents(Expression expr, ParseResult containingExpr) {
+        expr.setParent(containingExpr);
+        if (expr instanceof Operation op) {
+            updateParents(op.getLeft(), op);
+            updateParents(op.getRight(), op);
+        }
+        else if (expr instanceof Group group) 
+            updateParents(group.getBody(), group);
+    }
+    
     /**
      * 
      * @param input
@@ -38,10 +48,14 @@ public class Parser {
             assert substreams.length == 2 : "there should only be a left and right side";
             Expression leftExpr = _parseExpression(substreams[0]);
             Expression rightExpr = _parseExpression(substreams[1]);
-            return new Equation(leftExpr, rightExpr);
+            Equation eqn = new Equation(leftExpr, rightExpr);
+            updateParents(leftExpr, eqn);
+            updateParents(rightExpr, eqn);
+            return eqn;
         }
         
         Expression expr = _parseExpression(stream);
+        updateParents(expr, null);
         assert stream.isExhausted() : "did not consume all tokens";
         return expr;
     }
@@ -102,5 +116,5 @@ public class Parser {
             case "^" -> new BindingPower(6, 5);
             default -> throw new AssertionError("unexpected operator: " + op);
         };
-    }   
+    }
 }

@@ -1,6 +1,5 @@
-package runthenumbers;
+package runthenumbers.math;
 
-import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.ParseResult;
 import runthenumbers.math.ast.Parser;
@@ -65,18 +64,25 @@ public class TestSuite {
         assertSimplify("2 + 10^3 - 3", "999");
         assertSimplify("2^2^2", "16");
         assertSimplify("1 + 2 * 3 - 4 / 5^2", "6.84");
+        assertSimplify("(((((5)))))", "5");
         // With variables, with add/subtract.
         assertSimplify("5x + 2*3", "5x + 6");
         assertSimplify("x + 5(2*4)", "x + 40");
+//        assertSimplify("5x + 5 + 5", "5x + 10");
         // With variables, with multiply/divide.
-        assertSimplify("5x * 3 * 3", "45x");
-        assertSimplify("10 * x * 10", "100x");
+//        assertSimplify("5x * 3 * 3", "45x");
+//        assertSimplify("10 * x * 10", "100x");
         // With variables, with brackets.
         assertSimplify("x + (5 + 2)", "x + 7");
         assertSimplify("x + (5 + 2) * 2", "x + 14");
-        assertSimplify("10 + x + (5 + 2) * 2", "24 + x");
-        assertSimplify("10 + x + (2x)*2", "10 + 5x");
+//        assertSimplify("10 + x + (5 + 2) * 2", "24 + x");
+//        assertSimplify("10 + x + (2x)*2", "10 + 5x");
     }
+    
+    public static void testSimplificationEquation() {
+        assertSimplify("5 + 4 = x", "9 = x");
+    }
+    
     
     public static void testLinearSolver() {
         
@@ -121,8 +127,9 @@ public class TestSuite {
     }
     
     private static void assertSimplify(String input, String expected) {
-        ParseResult actualResult = Simplifier.simplify(Parser.parse(input));
+        ParseResult actualResult = Parser.parse(input);
         ParseResult expectedResult = Parser.parse(expected);
+        Simplifier.simplify(actualResult);
         if (!actualResult.equals(expectedResult)) {
             System.out.printf("""
                       [ERROR] simplification

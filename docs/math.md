@@ -295,6 +295,9 @@ class Equation {
 
 abstract class Expression {
     {abstract} +toString() : String
+    -Expression parent
+    +getParent() : Expression
+    +setParent(Expression parent) : void
 }
 class Number extends Expression {
     -double value
@@ -366,6 +369,7 @@ class Simplifier {
     -simplifyNode(Expression expr) : Expression
     -combineLikeTerms(Expression expr) : void
     -findLikeTerms(Expression expr) : ArrayList<Operation> 
+    -distributeTerms(Expression expr) : Expression
 }
 ```
 
@@ -385,7 +389,8 @@ on one side.
 
 For expressions containing brackets, the workaround is to aggressively
 simplify the expression. Once there are no brackets left, the equation can
-be solved as described above.
+be solved as described above. If brackets still remain after simplification,
+then solving those is left as a reach goal.
 
 It's easier to explain the algorithm using an activity diagram than with
 pseudocode.
@@ -411,8 +416,20 @@ endwhile
 stop
 ```
 
-The simplify (AKA collection of like terms) implementation will
-broadly look like this:
+### Detour: Simplification
+
+To make the solver's life easier, the equation will be simplified as
+much as possible. The goal to only have a handful of operations on the
+side with the variable.
+
+As mentioned earlier, the simplifier should ideally be able to:
+
+- Fold operations with constant operands (i.e., a constant answer)
+- Collect like terms (add/subtract, consecutive multiplication)
+- Distribute a term over brackets
+- ~~Expansion~~ (likely difficult, deferred for later)
+
+The first two parts of the simplification logic will broadly look like this:
 
 ```python
 def simplify_node(expr: Expression):
@@ -465,6 +482,8 @@ def find_like_terms(expr: Expression):
         # even look for candidate terms.
         return []
 ```
+
+
 
 ### Quadratic single variable solving
 

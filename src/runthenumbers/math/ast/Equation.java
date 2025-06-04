@@ -1,7 +1,5 @@
 package runthenumbers.math.ast;
 
-import java.util.Objects;
-
 /**
  * TODO
  * @author Richard Si

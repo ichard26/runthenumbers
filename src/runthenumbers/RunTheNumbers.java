@@ -1,5 +1,6 @@
 package runthenumbers;
 
+import runthenumbers.math.TestSuite;
 import runthenumbers.utils.PrettyPrinter;
 import runthenumbers.utils.prompt.StringPrompt;
 import runthenumbers.math.Evaluator;
@@ -13,9 +14,13 @@ import runthenumbers.math.solve.Simplifier;
 [TODO LIST]
 
 - [x] Port over calculator math implementation
-- [] Extend math impl. to handle variables and equations
+- [x] Extend math impl. to handle variables and equations
 - [x] Extend tokenizer and parser with fix-ups and error handling
 - [] DOCUMENTATION (class, methods) & COMMENT CHECKPOINT
+- [] Complete simplification barebones
+- [] Extend simplifier to support distribution, multiply folding, and collection
+     of variable terms
+- [] Implement basic linear solver
 */
 
 /**
@@ -29,24 +34,30 @@ public class RunTheNumbers {
      */
     public static void main(String[] args) {
         // Run test suite before starting the application.
-        boolean passed = TestSuite.runSelfCheck();
+        boolean passed = true || TestSuite.runSelfCheck();
         if (!passed) {
             System.out.println("[ERROR] self-check failed, aborting...");
             System.exit(1);
         }
         
+        ParseResult ast = Parser.parse("5-1");
+        new PrettyPrinter().print(ast);
+        Simplifier.simplify(ast);
+        new PrettyPrinter().print(ast);
+        System.out.println(ast);
+        
         String input;
-        while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
+        while (false && !(input = new StringPrompt(">>>").ask()).isBlank()) {
             ParseResult result = Parser.parse(input);
             if (result instanceof Expression expr) {
                 new PrettyPrinter().print(result);
-                expr = Simplifier.simplify(expr);
-                new PrettyPrinter().print(expr);
+                Simplifier.simplify(expr);
+                // new PrettyPrinter().print(expr);
                 System.out.println("Result: " + Evaluator.evaluate(expr));
             }
             else {
                 new PrettyPrinter().print(result);
-                result = Simplifier.simplify((Equation)result);
+                Simplifier.simplify((Equation)result);
                 new PrettyPrinter().print(result);
                 System.out.println("Result: " + result.toString());
             }

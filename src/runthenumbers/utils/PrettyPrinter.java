@@ -19,12 +19,16 @@ public class PrettyPrinter {
     private final Sentinel UNKNOWN = new Sentinel();
     
     public void print(Object obj) {
-        StringBuilder builder = new StringBuilder();
+        if (obj == null) {
+            System.out.println(obj);
+            return;
+        }
+        
         Class cls = obj.getClass();
         
         String color = nextColor();
         printf("%s%s(%s\n", color, cls.getSimpleName(), ANSI.RESET);
-        indentLevel++;
+        indentLevel++;            
         
         for (Field field : cls.getDeclaredFields()) {
             Method getter = null;
@@ -38,7 +42,7 @@ public class PrettyPrinter {
             try {
                 value = getter.invoke(obj);
             } catch (IllegalAccessException | InvocationTargetException ex) { /* Ignore */ }
-            if (value.equals(UNKNOWN))
+            if (UNKNOWN.equals(value))
                 continue;
             
             if (value instanceof PrettyPrintable printable) {
