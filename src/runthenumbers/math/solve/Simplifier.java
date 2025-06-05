@@ -11,6 +11,8 @@ import runthenumbers.math.ast.Node;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
 
+record ConstantTerm(double value, Number node) {};
+
 /**
  * TODO
  * June 2, 2025
@@ -38,21 +40,18 @@ public class Simplifier {
                     && op.getRight() instanceof Number rightNum) {
                 // TODO: figure out logging
                 replaceNode(expr, new Number(Evaluator.evaluate(op)));
-                // return new Number(Evaluator.evaluate(op));
             }
         }
         else if (expr instanceof Group group) {
             foldConstantExpr(group.getBody());
-            // group.setBody(foldConstantExpr(group.getBody()));
             // Eliminate the group as it simplifies down to a constant.
             if (group.getBody() instanceof Number num)
-                // return num;
                 replaceNode(group, num);
         }
         
         collectLikeTerms(expr);
-    }
-    
+    } 
+   
     private static ArrayList<Operation> findLikeTerms(ExprNode expr) {
         ArrayList<Operation> addMinusTerms = new ArrayList<>();
         // Addition/subtraction are associative, thus we can collect and
@@ -69,23 +68,26 @@ public class Simplifier {
         return addMinusTerms;
     }
     
-    private static Number getConstantFromOperation(Operation op) {
+    public static ConstantTerm getConstantFromOperation(Operation op) {
         ExprNode left = op.getLeft();
         ExprNode right = op.getRight();
-        if (left instanceof Number leftNumber)
-            return leftNumber;
+        assert left instanceof Number || right instanceof Number;
         
-        assert right instanceof Number;
+        if (left instanceof Number leftNumber)
+            return new ConstantTerm(leftNumber.getValue(), leftNumber);
+        
         Number rightNumber = (Number)right;
-        if (op.is("-")) {
-            rightNumber.setValue(-rightNumber.getValue());
-            op.setOperator("+");
-        }
-        return rightNumber;
+        if (op.is("-"))
+            // If the number is the right subtraction operand, it needs to be
+            // treated as negative.
+            return new ConstantTerm(-rightNumber.getValue(), rightNumber);
+        
+        return new ConstantTerm(rightNumber.getValue(), rightNumber);
     }
     
-    private static void replaceNode(ExprNode original, ExprNode replacement) {
+    public static void replaceNode(ExprNode original, ExprNode replacement) {
         Node parent = original.getParent();
+        // System.out.println("Removing " + original + " replacement: " + replacement);
         
         replacement.setParent(parent);
         if (parent instanceof Group parentGroup)
@@ -116,7 +118,7 @@ public class Simplifier {
         }
     }
     
-    private static void removeNode(ExprNode node) {
+    public static void removeNode(ExprNode node) {
         Node parent = node.getParent();
         if (parent instanceof Group group) {
             // These brackets will be empty, thus remove the group entirely.
@@ -135,7 +137,7 @@ public class Simplifier {
             }
             // Removing the right operand.
             assert node == parentOp.getRight() : "is a child but not an operand?!";
-            if (parentOp.is("+")) {
+            if (parentOp.is("+", "-")) {
                 replaceNode(parentOp, parentOp.getLeft());
             }
             else
@@ -143,7 +145,7 @@ public class Simplifier {
             return;
         }
         
-        throw new AssertionError("Only group/operation can be parents.");
+        throw new RuntimeException("unexpected parent: " + parent);
     }
     
     private static void collectLikeTerms(ExprNode expr) {
@@ -151,13 +153,11 @@ public class Simplifier {
         if (terms.isEmpty())
             return;
         
-        Number first = getConstantFromOperation(terms.removeFirst());
+        ConstantTerm first = getConstantFromOperation(terms.removeFirst());
         for (Operation t : terms) {
-            Number constant = getConstantFromOperation(t);
-            first.setValue(first.getValue() + constant.getValue());
-            constant.setValue(0);
-            removeNode(constant);
-            
+            ConstantTerm constant = getConstantFromOperation(t);
+            first.node().setValue(first.node().getValue() + constant.value());
+            removeNode(constant.node());            
         }
     }
     

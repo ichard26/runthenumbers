@@ -66,10 +66,12 @@ public class TestSuite {
         assertSimplify("1 + 2 * 3 - 4 / 5^2", "6.84");
         assertSimplify("(((((5)))))", "5");
         // With variables, with add/subtract.
+        assertSimplify("x - 3", "x - 3");
         assertSimplify("5x + 2*3", "5x + 6");
         assertSimplify("x + 5(2*4)", "x + 40");
         assertSimplify("5x + 5 + 5", "5x + 10");
         // With variables, with multiply/divide.
+        assertSimplify("10+20 - 5x + 3*5 = 0", "45 - 5x = 0");
 //        assertSimplify("5x * 3 * 3", "45x");
 //        assertSimplify("10 * x * 10", "100x");
         // With variables, with brackets.

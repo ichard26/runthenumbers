@@ -55,12 +55,17 @@ public final class Operation extends ExprNode {
      */
     @Override
     public String toString() {
-        // Present N*x or x*N as Nx.
         if (is("*")) {
+            // Present N*x or x*N as Nx.
             if (left instanceof Number && right instanceof Variable)
                 return left.toString() + right;
             if (left instanceof Variable && right instanceof Number)
                 return right.toString() + left;
+        }
+        else if (is("^")) {
+            // Don't add spaces with a variable power.
+            if (left instanceof Variable && right instanceof Number)
+                return left.toString() + "^" + right;
         }
         
         return left.toString() + " " + operator + " " + right;

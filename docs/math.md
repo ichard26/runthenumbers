@@ -447,7 +447,7 @@ def simplify_node(expr: Expression):
 
     elif expr is Group
         simplify group.body
-        if group.body is Number:
+        if group.body is Number OR Variable:
             # Eliminate the group as it simplifies down to a constant.
             return group.body
     
@@ -467,8 +467,7 @@ def combine_like_terms(expr: Expression):
     for term_operation in like_terms:
         number_node = get_number_node of term_operation
         first_number.value += number_node.value
-        # <remove number_node (and its containing operation node)
-           # from tree as necessary>
+        number_node.removeFromAST()
 
 def find_like_terms(expr: Expression):
     # Look for operations which have one constant operand.
@@ -483,6 +482,56 @@ def find_like_terms(expr: Expression):
         return []
 ```
 
+### Back to linear solving
+
+```python
+def canSolve(expr: Expression):
+    if expr.countVariables() == 0 or expr.countVariables() >= 2:
+        return False
+    
+    # walk AST and keep track of the highest degree variable
+    highestDegree = 0
+    walkAST(node) {
+        if (
+            node is Operation
+            node.operator is "^"
+            and node.left is Variable
+            and node.right is Number
+            and node.right > highestDegree
+        ):
+            highestDegree = node.right
+        walkAST(node.children)
+    }(expr)
+
+    if highestDegree > 1:
+        return False
+
+    if expr.left.containsVariable() and expr.right.containsVariable():
+        return False
+
+    return True
+
+
+def solve(eqn: Equation):
+    # This assumes the variable term will always be on the left side.
+    while (eqn.left is not Variable):
+        # Apply inverse operation
+        eqn.left
+        if eqn.left.operator is ADD or SUBTRACT:
+            inverseValue = getConstantValue(eqn.left)
+            eqn.right += inverseValue
+        elif eqn.left.operator is MULTIPLY:
+            inverseValue = getConstantValue(eqn.left)
+            eqn.right /= inverseValue
+        elif eqn.left.operator is DIVIDE:
+            # Assume that we aren't dividing by a variable.
+            if (eqn.left.right is Variable): raise Error()
+            inverseValue = eqn.left.right
+            eqn.right *= inverseValue
+
+    # The variable is isolated on the left, we're done! 🎉
+    return eqn.right
+```
 
 
 ### Quadratic single variable solving

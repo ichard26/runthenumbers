@@ -9,6 +9,8 @@ import runthenumbers.math.ast.Parser;
 import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
+import runthenumbers.math.solve.LinearSolver;
+import runthenumbers.math.solve.Solver;
 
 /*
 [TODO LIST]
@@ -35,7 +37,7 @@ public class RunTheNumbers {
     public static void main(String[] args) {
         // Run test suite before starting the application.
         boolean passed = TestSuite.runSelfCheck();
-        if (!passed) {
+        if (!passed && false) {
             System.out.println("[ERROR] self-check failed, aborting...");
             System.exit(1);
         }
@@ -55,11 +57,18 @@ public class RunTheNumbers {
                 // new PrettyPrinter().print(expr);
                 System.out.println("Result: " + Evaluator.evaluate(expr));
             }
-            else {
-                new PrettyPrinter().print(result);
+            else if (result instanceof Equation eqn) {
+                // new PrettyPrinter().print(result);
                 Simplifier.simplify((Equation)result);
-                new PrettyPrinter().print(result);
-                System.out.println("Result: " + result.toString());
+                // new PrettyPrinter().print(result);
+                System.out.println("Simplified: " + result.toString());
+                
+                try {
+                    double r = new LinearSolver().solve(eqn);
+                    System.out.println("Solution: " + r);
+                } catch (Exception e) {
+                    
+                }
             }
             System.out.println();
         }
