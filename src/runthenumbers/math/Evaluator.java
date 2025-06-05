@@ -5,11 +5,13 @@ import runthenumbers.math.ast.ExprNode;
 import runthenumbers.math.ast.Group;
 import runthenumbers.math.ast.Operation;
 import runthenumbers.math.ast.Number;
+import runthenumbers.math.ast.Variable;
 
 /**
- * TODO
- * @date May 30, 2025
- * @author Richard Si
+ * Class Name: Evaluator
+ * Description: Evaluates math expressions.
+ * Programmer: Richard Si
+ * Date: May 30, 2025
  */
 public class Evaluator {
     public static double evaluate(Expression expr) {
@@ -17,11 +19,12 @@ public class Evaluator {
     }
     
     /**
-     * TODO
-     * @param expr
-     * @return 
+     * Method Name: evaluate
+     * Description: Evaluate a math expression and return final number.
+     * @param expr The math expression to evaluate.
+     * @return The expression's answer.
      */
-    public static double evaluate(ExprNode expr) {        
+    public static double evaluate(ExprNode expr) {
         if (expr instanceof Operation op) {
             double left = evaluate(op.getLeft());
             double right = evaluate(op.getRight());
@@ -39,6 +42,7 @@ public class Evaluator {
         else if (expr instanceof Number number)
             return number.getValue();
         
-        throw new AssertionError("unacceptable expression: " + expr);
+        assert expr instanceof Variable;
+        throw new RuntimeException("cannot evaluate expression with a variable");
     }
 }
