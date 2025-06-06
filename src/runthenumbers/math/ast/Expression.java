@@ -4,7 +4,7 @@ package runthenumbers.math.ast;
  *
  * @author Richard Si
  */
-public final class Expression extends RootNode {
+public final class Expression extends RootNode implements ParentNode {
     private ExprNode body;
 
     public Expression(ExprNode body) {

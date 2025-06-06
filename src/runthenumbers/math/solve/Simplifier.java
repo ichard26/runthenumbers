@@ -9,6 +9,7 @@ import runthenumbers.math.ast.Number;
 import runthenumbers.math.ast.Operation;
 import runthenumbers.math.ast.Node;
 import runthenumbers.math.ast.Expression;
+import runthenumbers.math.ast.ParentNode;
 import runthenumbers.math.ast.RootNode;
 
 record ConstantTerm(double value, Number node) {};
@@ -86,7 +87,7 @@ public class Simplifier {
     }
     
     public static void replaceNode(ExprNode original, ExprNode replacement) {
-        Node parent = original.getParent();
+        ParentNode parent = original.getParent();
         // System.out.println("Removing " + original + " replacement: " + replacement);
         
         replacement.setParent(parent);
@@ -119,7 +120,7 @@ public class Simplifier {
     }
     
     public static void removeNode(ExprNode node) {
-        Node parent = node.getParent();
+        ParentNode parent = node.getParent();
         if (parent instanceof Group group) {
             // These brackets will be empty, thus remove the group entirely.
             removeNode(group);

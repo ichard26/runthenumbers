@@ -6,13 +6,13 @@ package runthenumbers.math.ast;
  */
 public abstract sealed class ExprNode extends Node 
         permits Number, Variable, Operation, Group {
-    private Node parent;
+    private ParentNode parent;
 
-    public Node getParent() {
+    public ParentNode getParent() {
         return parent;
     }
 
-    public void setParent(Node parent) {
+    public void setParent(ParentNode parent) {
         this.parent = parent;
     }
 }

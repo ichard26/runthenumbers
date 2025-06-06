@@ -5,7 +5,7 @@ package runthenumbers.math.ast;
  * @date May 25, 2025
  * @author Richard Si
  */
-public final class Group extends ExprNode {
+public final class Group extends ExprNode implements ParentNode {
     private ExprNode body;
 
     public Group(ExprNode body) {

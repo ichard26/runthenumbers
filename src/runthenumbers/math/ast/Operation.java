@@ -5,7 +5,7 @@ package runthenumbers.math.ast;
  * @date May 25, 2025
  * @author Richard Si
  */
-public final class Operation extends ExprNode {
+public final class Operation extends ExprNode implements ParentNode {
     private ExprNode left;
     private String operator;
     private ExprNode right;

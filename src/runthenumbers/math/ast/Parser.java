@@ -16,7 +16,7 @@ record BindingPower(int left, int right) {};
  * @author Richard Si
  */
 public class Parser {
-    public static void updateParents(ExprNode expr, Node containingExpr) {
+    public static void updateParents(ExprNode expr, ParentNode containingExpr) {
         expr.setParent(containingExpr);
         if (expr instanceof Operation op) {
             updateParents(op.getLeft(), op);

@@ -10,7 +10,6 @@ import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
 import runthenumbers.math.solve.LinearSolver;
-import runthenumbers.math.solve.Solver;
 
 /*
 [TODO LIST]
@@ -23,6 +22,9 @@ import runthenumbers.math.solve.Solver;
 - [] Extend simplifier to support distribution, multiply folding, and collection
      of variable terms
 - [] Implement basic linear solver
+- [] Sketch out GUI
+- [] Extend unit tests
+- [] Add logging to math package
 */
 
 /**

@@ -533,6 +533,20 @@ def solve(eqn: Equation):
     return eqn.right
 ```
 
+```plantuml
+abstract class Node {}
+abstract class RootNode implements Node {}
+interface ParentNode {}
+
+class Expression extends RootNode implements ParentNode {}
+class Equation extends RootNode implements ParentNode {}
+
+abstract class ExprNode implements Node {}
+class Number extends ExprNode {}
+class Variable extends ExprNode {}
+class Group extends ExprNode implements ParentNode {}
+class Operation extends ExprNode implements ParentNode {}
+```
 
 ### Quadratic single variable solving
 
