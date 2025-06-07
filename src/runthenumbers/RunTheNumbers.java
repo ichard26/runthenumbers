@@ -38,17 +38,7 @@ public class RunTheNumbers {
      */
     public static void main(String[] args) {
         // Run test suite before starting the application.
-        boolean passed = TestSuite.runSelfCheck();
-        if (!passed && false) {
-            System.out.println("[ERROR] self-check failed, aborting...");
-            System.exit(1);
-        }
-        
-//        RootNode ast = Parser.parse("7 + 3*2");
-//        new PrettyPrinter().print(ast);
-//        Simplifier.simplify(ast);
-//        new PrettyPrinter().print(ast);
-//        System.out.println(ast);
+        TestSuite.runSelfCheck();
         
         String input;
         while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
@@ -59,7 +49,7 @@ public class RunTheNumbers {
             }
             else if (result instanceof Equation eqn) {
                 // new PrettyPrinter().print(result);
-                Simplifier.simplify((Equation)result);
+                Simplifier.simplify(eqn);
                 // new PrettyPrinter().print(result);
                 System.out.println("Simplified: " + result.toString());
                 
@@ -67,7 +57,7 @@ public class RunTheNumbers {
                     double r = new LinearSolver().solve(eqn);
                     System.out.println("Solution: " + r);
                 } catch (Exception e) {
-                    
+                    e.printStackTrace(System.out);
                 }
             }
             System.out.println();

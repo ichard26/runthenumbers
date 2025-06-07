@@ -72,11 +72,9 @@ public final class Operation extends ExprNode implements ParentNode {
             if (left instanceof Variable && right instanceof Number)
                 return right.toString() + left;
         }
-        else if (is("^")) {
-            // Don't add spaces with a variable power.
-            if (left instanceof Variable && right instanceof Number)
-                return left.toString() + "^" + right;
-        }
+        else if (is("^") && left instanceof Variable)
+            // Don't add spaces in a power with a variable base.
+            return left.toString() + "^" + right;
         
         return left.toString() + " " + operator + " " + right;
     }

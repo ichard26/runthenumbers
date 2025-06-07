@@ -1,6 +1,6 @@
 package runthenumbers.utils;
 
-final class ANSI {
+final public class ANSI {
     public static final String RESET = "\033[0m";
     public static final String BOLD = "\033[1m";
     public static final String BLACK = "\033[0;30m";

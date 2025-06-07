@@ -6,6 +6,7 @@ import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
 import runthenumbers.math.solve.LinearSolver;
+import runthenumbers.utils.ANSI;
 
 /**
  * TODO
@@ -28,7 +29,9 @@ public class TestSuite {
         testSimplification();
         log("testing linear solver");
         testLinearSolver();
-        log("verdict: %d passed, %d failed", passingCases, failingCases);
+        System.out.print(failingCases == 0 ? ANSI.MAGENTA : ANSI.RED);
+        log("test results: %d passed, %d failed", passingCases, failingCases);
+        System.out.print(ANSI.RESET);
         return failingCases == 0;
     }
     
