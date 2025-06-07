@@ -31,6 +31,9 @@ public class PrettyPrinter {
         indentLevel++;            
         
         for (Field field : cls.getDeclaredFields()) {
+            if (!Character.isLetterOrDigit(field.getName().charAt(0)))
+                continue;
+            
             Method getter = null;
             Object value = UNKNOWN;
             try {

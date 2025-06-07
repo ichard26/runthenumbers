@@ -55,8 +55,6 @@ public class RunTheNumbers {
             RootNode result = Parser.parse(input);
             if (result instanceof Expression expr) {
                 new PrettyPrinter().print(result);
-                Simplifier.simplify(expr);
-                // new PrettyPrinter().print(expr);
                 System.out.println("Result: " + Evaluator.evaluate(expr));
             }
             else if (result instanceof Equation eqn) {

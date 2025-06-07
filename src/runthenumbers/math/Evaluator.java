@@ -43,6 +43,6 @@ public class Evaluator {
             return number.getValue();
         
         assert expr instanceof Variable;
-        throw new RuntimeException("cannot evaluate expression with a variable");
+        throw new Error("cannot evaluate expression with a variable");
     }
 }

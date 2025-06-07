@@ -109,8 +109,8 @@ public class Tokenizer {
             next = tokens.get(i+1);
             
             fixedTokens.add(current);
-            // Fix-up 1: Replace a negative number with a subtraction operator
-            //           if followed by a number/variable/opening bracket.
+            // Fix-up 1: Split a negative number into a minus sign and its
+            //           absolute value as needed.
             if (current.is("Number", "Variable", "RightBracket")
                     && next.is("Number") 
                     && next.getValue().startsWith("-")) {
