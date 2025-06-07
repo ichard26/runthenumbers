@@ -13,6 +13,11 @@ public final class Variable extends ExprNode implements PrettyPrintable {
         this.name = name;
     }
     
+    @Override
+    public Variable deepcopy() {
+        return new Variable(name);
+    }
+    
     // Getters and setters.
 
     public String getName() {
@@ -43,5 +48,5 @@ public final class Variable extends ExprNode implements PrettyPrintable {
     @Override
     public String toPrettyString() {
         return "Variable(" + name + ")";
-    }   
+    }
 }

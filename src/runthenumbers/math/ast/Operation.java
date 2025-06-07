@@ -15,6 +15,11 @@ public final class Operation extends ExprNode implements ParentNode {
         this.operator = operator;
         setRight(right);
     }
+    
+    @Override
+    public Operation deepcopy() {
+        return new Operation((ExprNode)left.deepcopy(), operator, (ExprNode)right.deepcopy());
+    }
 
     // Getters and setters.
     

@@ -11,6 +11,11 @@ public final class Group extends ExprNode implements ParentNode {
     public Group(ExprNode body) {
         setBody(body);
     }
+    
+    @Override
+    public Group deepcopy() {
+        return new Group(body.deepcopy());
+    }
 
     // Getters and setters.
     

@@ -10,6 +10,11 @@ public final class Expression extends RootNode implements ParentNode {
     public Expression(ExprNode body) {
         setBody(body);
     }
+    
+    @Override
+    public Expression deepcopy() {
+        return new Expression(body.deepcopy());
+    }
 
     public ExprNode getBody() {
         return body;

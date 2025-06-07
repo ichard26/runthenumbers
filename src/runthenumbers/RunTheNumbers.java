@@ -48,10 +48,12 @@ public class RunTheNumbers {
                 System.out.println("Result: " + Evaluator.evaluate(expr));
             }
             else if (result instanceof Equation eqn) {
+                Equation original = eqn.deepcopy();
                 // new PrettyPrinter().print(result);
                 Simplifier.simplify(eqn);
                 // new PrettyPrinter().print(result);
-                System.out.println("Simplified: " + result.toString());
+                if (!original.equals(eqn))
+                    System.out.println("Simplified: " + result.toString());
                 
                 try {
                     double r = new LinearSolver().solve(eqn);

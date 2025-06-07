@@ -15,4 +15,7 @@ public abstract sealed class ExprNode extends Node
     public void setParent(ParentNode parent) {
         this.parent = parent;
     }
+    
+    @Override
+    abstract public ExprNode deepcopy();
 }

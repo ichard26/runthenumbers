@@ -13,6 +13,11 @@ public final class Number extends ExprNode implements PrettyPrintable {
     public Number(double value) {
         this.value = value;
     }
+    
+    @Override
+    public Number deepcopy() {
+        return new Number(value);
+    }
 
     // Getters and setters.
     

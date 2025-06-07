@@ -13,6 +13,11 @@ public final class Equation extends RootNode implements ParentNode {
         setRight(right);
     }
     
+    @Override
+    public Equation deepcopy() {
+        return new Equation(left.deepcopy(), right.deepcopy());
+    }
+    
     // Getters and setters.
 
     public ExprNode getLeft() {
