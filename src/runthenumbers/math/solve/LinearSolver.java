@@ -17,28 +17,6 @@ public class LinearSolver implements Solver {
         // TODO: actually check the equation...
         return true;
     }
-    
-    /*
-    def solve(eqn: Equation):
-    # This assumes the variable term will always be on the left side.
-    while (eqn.left is not Variable):
-        # Apply inverse operation
-        eqn.left
-        if eqn.left.operator is ADD or SUBTRACT:
-            inverseValue = getConstantValue(eqn.left)
-            eqn.right += inverseValue
-        elif eqn.left.operator is MULTIPLY:
-            inverseValue = getConstantValue(eqn.left)
-            eqn.right /= inverseValue
-        elif eqn.left.operator is DIVIDE:
-            # Assume that we aren't dividing by a variable.
-            if (eqn.left.right is Variable): raise Error()
-            inverseValue = eqn.left.right
-            eqn.right *= inverseValue
-
-    # The variable is isolated on the left, we're done! 🎉
-    return eqn.right
-    */
 
     @Override
     public double solve(Equation eqn) {
@@ -50,26 +28,22 @@ public class LinearSolver implements Solver {
             assert left instanceof Operation;
             Operation leftOp = (Operation)left;
             
-            if (leftOp.is("+", "-")) {
-                ConstantOperand term = Simplifier.getConstantFromOperation(leftOp);
-                double inverseValue = term.isRightOfMinus() ? term.value() : -term.value(); 
-                right.setValue(right.getValue() + inverseValue);
-                Simplifier.removeNode(term.node());
+            ConstantOperand constant = Simplifier.getConstantFromOperation(leftOp);
+            if (leftOp.is("+") || leftOp.is("-") && !constant.isRightOfMinus()){
+                right.setValue(right.getValue() - constant.value());
+            }
+            else if (leftOp.is("-")) {
+                right.setValue(right.getValue() + constant.value());   
             }
             else if (leftOp.is("*")) {
-                ConstantOperand term = Simplifier.getConstantFromOperation(leftOp);
-                right.setValue(right.getValue() / term.value());
-                Simplifier.removeNode(term.node());
+                right.setValue(right.getValue() / constant.value());
             }
-            else {
-                if (leftOp.getRight() instanceof Number divisor) {
-                    right.setValue(right.getValue() * divisor.getValue());
-                    Simplifier.removeNode(divisor);
-                }
-                else {
-                    throw new Error("not implemented");
-                }
+            else if (leftOp.is("/") && constant.node() == leftOp.getRight()){
+                right.setValue(right.getValue() * constant.value());
             }
+            else
+                throw new Error("not implemented");
+            Simplifier.removeNode(constant.node());
         }
         
         ExprNode right = eqn.getRight();

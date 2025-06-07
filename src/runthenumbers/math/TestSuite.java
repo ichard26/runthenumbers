@@ -101,9 +101,12 @@ public class TestSuite {
         assertSolve("x + 4 - 4 + 4 - 4 = 5", 5);
         assertSolve("5 + x = 0", -5);
         assertSolve("5 - x = 0", 5);
+        assertSolve("-x + 5 = 0", 5);
         // More complex LHS.
+        assertSolve("-5x = 25", -5);
         assertSolve("20*10 + x + 50*2.5 = 0", -325);
         assertSolve("5^2 + x*2/10 - 200 = 10", 925);
+        assertSolve("5*4*3*x*2*1 + 40 = 100", 0.5);
     }
     
     /**
