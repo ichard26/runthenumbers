@@ -1,9 +1,11 @@
 package runthenumbers.math;
 
+import runthenumbers.math.ast.Equation;
 import runthenumbers.math.ast.Parser;
 import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
+import runthenumbers.math.solve.LinearSolver;
 
 /**
  * TODO
@@ -53,7 +55,8 @@ public class TestSuite {
         assertEvaluate("5-1-1-1-1", 1);
         assertEvaluate("(5)(2)", 10);
         assertEvaluate("5(3)", 15);
-        // TODO test Nx, x-N
+        assertSimplify("5x", "5 * x");
+        assertSimplify("x-5", "x - 5");
     }
     
     public static void testSimplification() {
@@ -90,7 +93,17 @@ public class TestSuite {
     
     
     public static void testLinearSolver() {
-        
+        assertSolve("x = 0", 0);
+        assertSolve("x + 3 = 0", -3);
+        assertSolve("x - 3 = 0", 3);
+        assertSolve("x * 3 = 27", 9);
+        assertSolve("x / 3 = 3", 9);
+        assertSolve("x + 4 - 4 + 4 - 4 = 5", 5);
+        assertSolve("5 + x = 0", -5);
+        assertSolve("5 - x = 0", 5);
+        // More complex LHS.
+        assertSolve("20*10 + x + 50*2.5 = 0", -325);
+        assertSolve("5^2 + x*2/10 - 200 = 10", 925);
     }
     
     /**
@@ -149,6 +162,30 @@ public class TestSuite {
             passingCases++;
         }
     }
+    
+    private static void assertSolve(String input, double expected) {
+        RootNode root = Parser.parse(input);
+        if (root instanceof Expression)
+            throw new Error("Expected equation, got expression!");
+            
+        Equation eqn = (Equation)root;
+        Simplifier.simplify(eqn);
+        double result = new LinearSolver().solve(eqn);
+        if (result != expected) {
+            System.out.printf("""
+                      [ERROR] solve
+                        - Input: %s
+                        - Expected: %s
+                        - Actual: %s
+                      """, 
+                    input, Double.toString(expected), Double.toString(result));
+            failingCases++;
+        }
+        else {
+            passingCases++;
+        }
+    }
+
     
     /**
      * TODO

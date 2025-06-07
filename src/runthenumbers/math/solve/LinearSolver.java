@@ -52,18 +52,23 @@ public class LinearSolver implements Solver {
             
             if (leftOp.is("+", "-")) {
                 ConstantOperand term = Simplifier.getConstantFromOperation(leftOp);
-                double inverseValue = leftOp.is("-") ? term.value() : -term.value(); 
+                double inverseValue = term.isRightOfMinus() ? term.value() : -term.value(); 
                 right.setValue(right.getValue() + inverseValue);
                 Simplifier.removeNode(term.node());
             }
             else if (leftOp.is("*")) {
                 ConstantOperand term = Simplifier.getConstantFromOperation(leftOp);
                 right.setValue(right.getValue() / term.value());
-                System.out.println("aaa");
                 Simplifier.removeNode(term.node());
             }
             else {
-                throw new Error("not implemented");
+                if (leftOp.getRight() instanceof Number divisor) {
+                    right.setValue(right.getValue() * divisor.getValue());
+                    Simplifier.removeNode(divisor);
+                }
+                else {
+                    throw new Error("not implemented");
+                }
             }
         }
         

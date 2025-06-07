@@ -18,10 +18,10 @@ import runthenumbers.math.solve.LinearSolver;
 - [x] Extend math impl. to handle variables and equations
 - [x] Extend tokenizer and parser with fix-ups and error handling
 - [] DOCUMENTATION (class, methods) & COMMENT CHECKPOINT
-- [] Complete simplification barebones
+- [x] Complete simplification barebones
 - [] Extend simplifier to support distribution, multiply folding, and collection
      of variable terms
-- [] Implement basic linear solver
+- [x] Implement basic linear solver
 - [] Sketch out GUI
 - [] Extend unit tests
 - [] Add logging to math package
