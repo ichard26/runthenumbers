@@ -16,7 +16,7 @@ public class Token {
         this.value = value;
         this.position = position;
     }
-    
+
     // Getters and setters (only for value, though).
 
     public String getType() {
@@ -34,7 +34,7 @@ public class Token {
     public Span getPosition() {
         return position;
     }
-    
+
     /**
      * Method Name: is
      * Description: Check if the token is of type X, Y, or Z.
@@ -58,5 +58,5 @@ public class Token {
     public String toString() {
         return "Token(" + "kind=" + type + ", value=" + value + ", position=" + position + ')';
     }
-    
+
 }

@@ -13,31 +13,31 @@ public class TokenStream {
     public TokenStream(ArrayList<Token> tokens) {
         this.tokens = tokens;
     }
-    
+
     public Token peek() {
         return tokens.get(index);
     }
-    
+
     public Token next() {
         return tokens.get(index++);
     }
-    
+
     public boolean onLastToken() {
         return tokens.size() <= index;
     }
-    
+
     public boolean isExhausted() {
         return tokens.size() <= index + 1;
     }
-    
+
     public void rollback(int by) {
         index -= by;
     }
-    
+
     public void reset() {
         index = 0;
     }
-    
+
     public TokenStream[] split(String onType) {
         ArrayList<ArrayList<Token>> sections = new ArrayList<>();
         sections.add(new ArrayList<>());
@@ -47,11 +47,11 @@ public class TokenStream {
             else
                 sections.getLast().add(t);
         }
-        
+
         TokenStream[] substreams = new TokenStream[sections.size()];
         for (int i = 0; i < sections.size(); i++)
             substreams[i] = new TokenStream(sections.get(i));
-        
+
         return substreams;
     }
 }

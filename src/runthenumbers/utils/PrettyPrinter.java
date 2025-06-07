@@ -17,23 +17,23 @@ public class PrettyPrinter {
     private final String[] CLASS_COLOURS = { ANSI.MAGENTA, ANSI.BLUE };
     private int colorIndex;
     private final Sentinel UNKNOWN = new Sentinel();
-    
+
     public void print(Object obj) {
         if (obj == null) {
             System.out.println(obj);
             return;
         }
-        
+
         Class cls = obj.getClass();
-        
+
         String color = nextColor();
         printf("%s%s(%s\n", color, cls.getSimpleName(), ANSI.RESET);
-        indentLevel++;            
-        
+        indentLevel++;
+
         for (Field field : cls.getDeclaredFields()) {
             if (!Character.isLetterOrDigit(field.getName().charAt(0)))
                 continue;
-            
+
             Method getter = null;
             Object value = UNKNOWN;
             try {
@@ -41,13 +41,13 @@ public class PrettyPrinter {
             } catch (NoSuchMethodException e) { }
             if (getter == null)
                 continue;
-            
+
             try {
                 value = getter.invoke(obj);
             } catch (IllegalAccessException | InvocationTargetException ex) { /* Ignore */ }
             if (UNKNOWN.equals(value))
                 continue;
-            
+
             if (value instanceof PrettyPrintable printable) {
                 printf("%s=%s,\n", field.getName(), printable.toPrettyString());
             }
@@ -55,8 +55,8 @@ public class PrettyPrinter {
                 printf("%s='%s',\n", field.getName(), string);
             }
             else {
-                if (value instanceof Integer 
-                        || value instanceof Double 
+                if (value instanceof Integer
+                        || value instanceof Double
                         || value instanceof Boolean) {
                     printf("%s=%s,\n", field.getName(), value.toString());
                 }
@@ -67,21 +67,21 @@ public class PrettyPrinter {
                 }
             }
         }
-        
+
         indentLevel--;
         printf("%s)%s\n", color, ANSI.RESET);
     }
-    
+
     private void printf(String template, Object... args) {
         if (!ignoreIndentOnce)
             template = " ".repeat(indentLevel*3) + template;
         System.out.printf(template, args);
         ignoreIndentOnce = false;
     }
-    
+
     private String nextColor() {
         colorIndex = (colorIndex + 1) % CLASS_COLOURS.length;
         return CLASS_COLOURS[colorIndex];
     }
-    
+
 }

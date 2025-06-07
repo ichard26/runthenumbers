@@ -17,7 +17,7 @@ public class Evaluator {
     public static double evaluate(Expression expr) {
         return evaluate(expr.getBody());
     }
-    
+
     /**
      * Method Name: evaluate
      * Description: Evaluate a math expression and return final number.
@@ -41,7 +41,7 @@ public class Evaluator {
             return evaluate(group.getBody());
         else if (expr instanceof Number number)
             return number.getValue();
-        
+
         assert expr instanceof Variable;
         throw new Error("cannot evaluate expression with a variable");
     }

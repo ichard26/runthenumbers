@@ -16,11 +16,11 @@ public class Random {
     public static String titleCase(String word) {
         if (word.contains(" "))
             throw new InputMismatchException("no spaces allowed");
-        
+
         word = word.toLowerCase();
         return word.replaceFirst(word.substring(0, 1), word.substring(0, 1).toUpperCase());
     }
-    
+
     /**
      * Method Name: colorPrintf
      * Description: Wrapper over System.out.printf which accepts a color tag.
@@ -30,7 +30,7 @@ public class Random {
     public static void colorPrintf(String template, Object... parameters) {
         int colorTagEnd;
         String ansiCode = null;
-        
+
         // Look for a [$color] prefix and replace it with the right ANSI code.
         if (template.startsWith("[")) {
             colorTagEnd = template.indexOf("]");

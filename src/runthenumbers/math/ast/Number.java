@@ -13,14 +13,14 @@ public final class Number extends ExprNode implements PrettyPrintable {
     public Number(double value) {
         this.value = value;
     }
-    
+
     @Override
     public Number deepcopy() {
         return new Number(value);
     }
 
     // Getters and setters.
-    
+
     public double getValue() {
         return value;
     }
@@ -28,10 +28,10 @@ public final class Number extends ExprNode implements PrettyPrintable {
     public void setValue(double value) {
         this.value = value;
     }
-    
+
     /**
      * TODO
-     * @return 
+     * @return
      */
     @Override
     public String toString() {
@@ -45,12 +45,12 @@ public final class Number extends ExprNode implements PrettyPrintable {
     public String toPrettyString() {
         return "Number(" + toString() + ")";
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Number other)
             return this.value == other.value;
-        
+
         return false;
     }
 }

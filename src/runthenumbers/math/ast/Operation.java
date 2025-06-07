@@ -15,14 +15,14 @@ public final class Operation extends ExprNode implements ParentNode {
         this.operator = operator;
         setRight(right);
     }
-    
+
     @Override
     public Operation deepcopy() {
         return new Operation((ExprNode)left.deepcopy(), operator, (ExprNode)right.deepcopy());
     }
 
     // Getters and setters.
-    
+
     public ExprNode getLeft() {
         return left;
     }
@@ -48,7 +48,7 @@ public final class Operation extends ExprNode implements ParentNode {
     public void setRight(ExprNode right) {
         this.right = right;
     }
-    
+
     public void replaceOperand(ExprNode operand, ExprNode replacement) {
         assert operand == left || operand == right : operand.toString() + "is not an operand";
         if (operand == left)
@@ -56,17 +56,17 @@ public final class Operation extends ExprNode implements ParentNode {
         else
             setRight(replacement);
     }
-    
+
     public boolean is(String... operators) {
         for (String op : operators)
             if (op.equals(this.operator))
                 return true;
         return false;
     }
-    
+
     /**
      * TODO
-     * @return 
+     * @return
      */
     @Override
     public String toString() {
@@ -80,17 +80,17 @@ public final class Operation extends ExprNode implements ParentNode {
         else if (is("^") && left instanceof Variable)
             // Don't add spaces in a power with a variable base.
             return left.toString() + "^" + right;
-        
+
         return left.toString() + " " + operator + " " + right;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Operation other)
-            return this.left.equals(other.left) 
+            return this.left.equals(other.left)
                     && this.operator.equals(other.operator)
                     && this.right.equals(other.right);
-        
+
         return this == obj;
     }
 }

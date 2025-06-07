@@ -11,7 +11,7 @@ public class StringPrompt extends Prompt<String> {
     public StringPrompt(String prompt) {
         super(prompt);
     }
-    
+
     public StringPrompt choices(Collection<String> options, String... extraOptions) {
         restrict(s -> {
             for (String choice : options) {
@@ -26,12 +26,12 @@ public class StringPrompt extends Prompt<String> {
         }, "Invalid choice.");
         return this;
     }
-    
+
     @Override
     protected String askOnce() {
         Scanner scanS = new Scanner(System.in);
         System.out.printf("%s ", prompt);
-        return scanS.nextLine(); 
+        return scanS.nextLine();
     }
-    
+
 }

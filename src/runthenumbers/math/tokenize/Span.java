@@ -16,7 +16,7 @@ public class Span {
     }
 
     // Getters (no setters as this class is immutable).
-    
+
     public int getStart() {
         return start;
     }
@@ -24,7 +24,7 @@ public class Span {
     public int getEnd() {
         return end;
     }
-    
+
     /**
      * Method Name: toString
      * Description: Format span in a human friendly way.
@@ -34,5 +34,5 @@ public class Span {
     public String toString() {
         return "(" + start + ", " + end + ")";
     }
-    
+
 }

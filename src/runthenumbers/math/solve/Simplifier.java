@@ -48,14 +48,14 @@ public class Simplifier {
             if (group.getBody() instanceof Number num)
                 replaceNode(group, num);
         }
-        
+
         collectLikeTerms(expr);
-    } 
-   
+    }
+
     private static ArrayList<Operation> findLikeTerms(ExprNode expr) {
         ArrayList<Operation> addMinusTerms = new ArrayList<>();
         // Addition/subtraction are associative, thus we can collect and
-        // fold them into a single term. 
+        // fold them into a single term.
         if (expr instanceof Operation op && op.is("+", "-")) {
             addMinusTerms.addAll(findLikeTerms(op.getLeft()));
             addMinusTerms.addAll(findLikeTerms(op.getRight()));
@@ -64,21 +64,21 @@ public class Simplifier {
         }
         else if (expr instanceof Group)
             return new ArrayList<>();
-        
+
         return addMinusTerms;
     }
-    
-    public static ConstantOperand getConstantFromOperation(Operation op) {        
+
+    public static ConstantOperand getConstantFromOperation(Operation op) {
         if (op.getLeft() instanceof Number number)
-            return new ConstantOperand(number.getValue(), false, number);  
+            return new ConstantOperand(number.getValue(), false, number);
         if (op.getRight() instanceof Number number)
             return new ConstantOperand(number.getValue(), op.is("-"), number);
-        
+
         throw new Error(op.toString() + " does not contain a constant LHS or RHS");
     }
-    
+
     public static void replaceNode(ExprNode original, ExprNode replacement) {
-        // System.out.println("Removing " + original + " replacement: " + replacement);        
+        // System.out.println("Removing " + original + " replacement: " + replacement);
         switch (original.getParent()) {
             case Expression parentExpr -> parentExpr.setBody(replacement);
             case Group parentGroup -> parentGroup.setBody(replacement);
@@ -86,17 +86,17 @@ public class Simplifier {
             case Operation parentOp -> parentOp.replaceOperand(original, replacement);
         }
     }
-    
+
     public static void removeNode(ExprNode node) {
         ParentNode parent = node.getParent();
-        
+
         switch (parent) {
             case Equation unused -> replaceNode(node, new Number(0));
             case Expression unused -> replaceNode(node, new Number(0));
             case Group group -> // The brackets will be empty, thus remove the group outright.
                 removeNode(group);
             case Operation parentOp -> {
-                assert node == parentOp.getLeft() || node == parentOp.getRight() 
+                assert node == parentOp.getLeft() || node == parentOp.getRight()
                         : "is a child but not an operand?!";
                 if (node == parentOp.getLeft()) {
                     // Removing the left operand is a bit involved depending on
@@ -112,21 +112,21 @@ public class Simplifier {
                     }
                     else
                         throw new Error("Removing LHS of division is unsupported");
-                                     
+
                     return;
                 }
-                
+
                 // The right operand can be removed without additional adjustments.
                 replaceNode(parentOp, parentOp.getLeft());
             }
-        }        
+        }
     }
-    
+
     private static void collectLikeTerms(ExprNode expr) {
         ArrayList<Operation> terms = findLikeTerms(expr);
         if (terms.size() < 2)
             return;
-        
+
         Number firstTerm = getConstantFromOperation(terms.removeFirst()).node();
         for (Operation t : terms) {
             ConstantOperand constant = getConstantFromOperation(t);
@@ -136,8 +136,8 @@ public class Simplifier {
                 firstTerm.setValue(firstTerm.getValue() - constant.value());
             else
                 firstTerm.setValue(firstTerm.getValue() + constant.value());
-            removeNode(constant.node());            
+            removeNode(constant.node());
         }
     }
-    
+
 }

@@ -15,10 +15,10 @@ import runthenumbers.utils.ANSI;
 public class TestSuite {
     private static int passingCases;
     private static int failingCases;
-    
+
     /**
      * TODO
-     * @return 
+     * @return
      */
     public static boolean runSelfCheck() {
         log("testing evaluation");
@@ -34,7 +34,7 @@ public class TestSuite {
         System.out.print(ANSI.RESET);
         return failingCases == 0;
     }
-    
+
     /**
      * TODO
      */
@@ -52,7 +52,7 @@ public class TestSuite {
         assertEvaluate("2^2^2", 16);
         assertEvaluate("1 + 2 * 3 - 4 / 5^2", 6.84);
     }
-    
+
     public static void testFixups() {
         assertEvaluate("1-3", -2);
         assertEvaluate("5-1-1-1-1", 1);
@@ -61,7 +61,7 @@ public class TestSuite {
         assertSimplify("5x", "5 * x");
         assertSimplify("x-5", "x - 5");
     }
-    
+
     public static void testSimplification() {
         // Without variables. Constant folding will simplify these down to a number.
         assertSimplify("1-3", "-2");
@@ -87,14 +87,14 @@ public class TestSuite {
         assertSimplify("(x +3-2) + (2*3x)", "(x + 1) + (6x)");
 //        assertSimplify("10 + x + (2x)*2", "10 + 5x");
     }
-    
+
     public static void testSimplificationEquation() {
         assertSimplify("5 + 4 = x", "9 = x");
         assertSimplify("1*2*3 = 3*2*1", "6 = 6");
         assertSimplify("1 + ((x)) + 3 = 10^2", "4 + x = 100");
     }
-    
-    
+
+
     public static void testLinearSolver() {
         assertSolve("x = 0", 0);
         assertSolve("x + 3 = 0", -3);
@@ -111,11 +111,11 @@ public class TestSuite {
         assertSolve("5^2 + x*2/10 - 200 = 10", 925);
         assertSolve("5*4*3*x*2*1 + 40 = 100", 0.5);
     }
-    
+
     /**
      * TODO
      * @param input
-     * @param expected 
+     * @param expected
      */
     private static void assertEvaluate(String input, double expected) {
         double result = -1000000;
@@ -130,7 +130,7 @@ public class TestSuite {
             System.out.printf("""
                               [ERROR] evaluation
                                 - Input: %s
-                              """, 
+                              """,
                     input);
             error.printStackTrace(System.out);
             failingCases++;
@@ -141,7 +141,7 @@ public class TestSuite {
                               [ERROR] evaluation
                                 - Input: %s
                                 - Expected: %s, Actual: %s
-                              """, 
+                              """,
                     input, Double.toString(expected), Double.toString(result));
             failingCases++;
         }
@@ -149,7 +149,7 @@ public class TestSuite {
             passingCases++;
         }
     }
-    
+
     private static void assertSimplify(String input, String expected) {
         RootNode actualResult = Parser.parse(input);
         RootNode expectedResult = Parser.parse(expected);
@@ -160,7 +160,7 @@ public class TestSuite {
                         - Input: %s
                         - Expected: %s
                         - Actual: %s
-                      """, 
+                      """,
                     input, expectedResult.toString(), actualResult.toString());
             failingCases++;
         }
@@ -168,12 +168,12 @@ public class TestSuite {
             passingCases++;
         }
     }
-    
+
     private static void assertSolve(String input, double expected) {
         RootNode root = Parser.parse(input);
         if (root instanceof Expression)
             throw new Error("Expected equation, got expression!");
-            
+
         Equation eqn = (Equation)root;
         Simplifier.simplify(eqn);
         double result = new LinearSolver().solve(eqn);
@@ -183,7 +183,7 @@ public class TestSuite {
                         - Input: %s
                         - Expected: %s
                         - Actual: %s
-                      """, 
+                      """,
                     input, Double.toString(expected), Double.toString(result));
             failingCases++;
         }
@@ -192,22 +192,22 @@ public class TestSuite {
         }
     }
 
-    
+
     /**
      * TODO
      * @param input
-     * @return 
+     * @return
      */
     private static double evaluate(String input) {
         RootNode result = Parser.parse(input);
         if (result instanceof Expression expr)
             return Evaluator.evaluate(expr);
-        
+
         throw new Error("Expected expression, got equation!");
     }
-    
+
     private static void log(String template, Object... args) {
         System.out.printf("[self-check] " + template + "\n", args);
     }
-    
+
 }

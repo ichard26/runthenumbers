@@ -18,7 +18,7 @@ public class TokenizeError extends RuntimeException {
         this.message = message;
         this.position = position;
         this.fullInput = fullInput;
-        
+
         // Format a friendly error for unexpected tokens.
         // Also show the original input and point to the first bad character.
         String original = "  " + fullInput;
@@ -27,7 +27,7 @@ public class TokenizeError extends RuntimeException {
     }
 
     // Getters (no setters as this is an immutable class).
-    
+
     public Span getPosition() {
         return position;
     }
@@ -35,7 +35,7 @@ public class TokenizeError extends RuntimeException {
     public String getFullInput() {
         return fullInput;
     }
-    
+
     /**
      * Method Name: getMessage
      * Description: Provide an alternative error message for custom Error.
@@ -45,5 +45,5 @@ public class TokenizeError extends RuntimeException {
     public String getMessage() {
         return formattedError;
     }
-    
+
 }

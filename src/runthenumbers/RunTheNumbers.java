@@ -39,7 +39,7 @@ public class RunTheNumbers {
     public static void main(String[] args) {
         // Run test suite before starting the application.
         TestSuite.runSelfCheck();
-        
+
         String input;
         while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
             RootNode result = Parser.parse(input);
@@ -54,7 +54,7 @@ public class RunTheNumbers {
                 // new PrettyPrinter().print(result);
                 if (!original.equals(eqn))
                     System.out.println("Simplified: " + result.toString());
-                
+
                 try {
                     double r = new LinearSolver().solve(eqn);
                     System.out.println("Solution: " + r);
@@ -66,5 +66,5 @@ public class RunTheNumbers {
         }
 
     }
-    
+
 }

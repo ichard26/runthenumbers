@@ -15,20 +15,20 @@ record BindingPower(int left, int right) {};
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Parser {    
+public class Parser {
     /**
-     * 
+     *
      * @param input
-     * @return 
+     * @return
      */
     public static RootNode parse(String input) {
         return parse(Tokenizer.tokenize(input));
     }
-    
+
     /**
      * TODO
      * @param stream
-     * @return 
+     * @return
      */
     public static RootNode parse(TokenStream stream) {
         // TODO: flag expressions with variables
@@ -40,20 +40,20 @@ public class Parser {
             ExprNode rightExpr = _parseExpression(substreams[1]);
             return new Equation(leftExpr, rightExpr);
         }
-        
+
         ExprNode innerExpr = _parseExpression(stream);
         assert stream.isExhausted() : "did not consume all tokens";
         return new Expression(innerExpr);
     }
-    
+
     private static ExprNode _parseExpression(TokenStream stream) {
         return _parseExpression(stream, 0);
     }
-    
+
     /**
      * TODO
      * @param minimumBP
-     * @return 
+     * @return
      */
     private static ExprNode _parseExpression(TokenStream stream, int minimumBP) {
         // NOTE: LHS = left hand side, RHS = right hand side.
@@ -63,7 +63,7 @@ public class Parser {
         boolean lhs_preceded_by_minus = lhs_token.is("Operator") && lhs_token.getValue().equals("-");
         if (lhs_preceded_by_minus)
             lhs_token = stream.next();
-        
+
         if (lhs_token.is("Number")) {
             lhs = new Number(Double.parseDouble(lhs_token.getValue()));
         }
@@ -78,7 +78,7 @@ public class Parser {
         }
         else
             throw new Error("unacceptable LHS token: " + lhs_token);
-        
+
         // HACK: if the LHS was preceded by a minus sign, multiply the LHS by
         // -1 to emulate an infix negative operator.
         if (lhs_preceded_by_minus && (lhs instanceof Variable || lhs instanceof Group))
@@ -89,23 +89,23 @@ public class Parser {
             if (op_token.is("RightBracket"))
                 // The sub-expression is finished so return the LHS now.
                 break;
-            
+
             BindingPower bp = _infixBindingPower(op_token.getValue());
             if (bp.left() < minimumBP)
                 break;
-            
+
             stream.next();
             rhs = _parseExpression(stream, bp.right());
             lhs = new Operation(lhs, op_token.getValue(), rhs);
         }
-        
+
         return lhs;
     }
-    
+
     /**
      * TODO
      * @param op
-     * @return 
+     * @return
      */
     private static BindingPower _infixBindingPower(String op) {
         return switch (op) {

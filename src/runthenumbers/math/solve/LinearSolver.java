@@ -21,19 +21,19 @@ public class LinearSolver implements Solver {
     @Override
     public double solve(Equation eqn) {
         assert eqn.getRight() instanceof Number;
-        
+
         while (!(eqn.getLeft() instanceof Variable)) {
             ExprNode left = eqn.getLeft();
             Number right = (Number)eqn.getRight();
             assert left instanceof Operation;
             Operation leftOp = (Operation)left;
-            
+
             ConstantOperand constant = Simplifier.getConstantFromOperation(leftOp);
             if (leftOp.is("+") || leftOp.is("-") && !constant.isRightOfMinus()){
                 right.setValue(right.getValue() - constant.value());
             }
             else if (leftOp.is("-")) {
-                right.setValue(right.getValue() + constant.value());   
+                right.setValue(right.getValue() + constant.value());
             }
             else if (leftOp.is("*")) {
                 right.setValue(right.getValue() / constant.value());
@@ -45,9 +45,9 @@ public class LinearSolver implements Solver {
                 throw new Error("not implemented");
             Simplifier.removeNode(constant.node());
         }
-        
+
         ExprNode right = eqn.getRight();
         return ((Number)right).getValue();
     }
-    
+
 }

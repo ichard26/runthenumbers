@@ -12,12 +12,12 @@ public final class Variable extends ExprNode implements PrettyPrintable {
     public Variable(String name) {
         this.name = name;
     }
-    
+
     @Override
     public Variable deepcopy() {
         return new Variable(name);
     }
-    
+
     // Getters and setters.
 
     public String getName() {
@@ -27,21 +27,21 @@ public final class Variable extends ExprNode implements PrettyPrintable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * TODO
-     * @return 
+     * @return
      */
     @Override
     public String toString() {
         return name;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Variable other)
             return this.name.equals(other.name);
-        
+
         return false;
     }
 

@@ -57,7 +57,7 @@ For a math expression, tokenization may look like this:
 
 ```
 5 * (2 + 2)
-| | | and so on... 
+| | | and so on...
 | | |
 | |  > Left bracket
 |  > Operator
@@ -76,7 +76,7 @@ TokenStream tokenize(String input) {
             continue  // we don't care about whitespace tokens
         else if match.type is "Unknown"
             throw MathParseError
-        
+
         tokens <- new token object of type "match.type"
     }
     return new TokenStream(tokens)
@@ -322,7 +322,7 @@ class Group extends Expression {
     -int left
     -int right
     +Getters()
-} 
+}
 
 class Parser {
     +parse(TokenStream stream) : Expression
@@ -368,7 +368,7 @@ class Simplifier {
     +simplify(Equation eqn) : Equation
     -simplifyNode(Expression expr) : Expression
     -combineLikeTerms(Expression expr) : void
-    -findLikeTerms(Expression expr) : ArrayList<Operation> 
+    -findLikeTerms(Expression expr) : ArrayList<Operation>
     -distributeTerms(Expression expr) : Expression
 }
 ```
@@ -450,7 +450,7 @@ def simplify_node(expr: Expression):
         if group.body is Number OR Variable:
             # Eliminate the group as it simplifies down to a constant.
             return group.body
-    
+
     combine_like_terms(expr)
     return expr
 
@@ -488,7 +488,7 @@ def find_like_terms(expr: Expression):
 def canSolve(expr: Expression):
     if expr.countVariables() == 0 or expr.countVariables() >= 2:
         return False
-    
+
     # walk AST and keep track of the highest degree variable
     highestDegree = 0
     walkAST(node) {
