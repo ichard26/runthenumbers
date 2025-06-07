@@ -9,7 +9,7 @@ public final class Group extends ExprNode implements ParentNode {
     private ExprNode body;
 
     public Group(ExprNode body) {
-        this.body = body;
+        setBody(body);
     }
 
     // Getters and setters.
@@ -19,6 +19,7 @@ public final class Group extends ExprNode implements ParentNode {
     }
 
     public void setBody(ExprNode body) {
+        body.setParent(this);
         this.body = body;
     }
 

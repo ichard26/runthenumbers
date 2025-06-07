@@ -15,17 +15,7 @@ record BindingPower(int left, int right) {};
  * @date May 25, 2025
  * @author Richard Si
  */
-public class Parser {
-    public static void updateParents(ExprNode expr, ParentNode containingExpr) {
-        expr.setParent(containingExpr);
-        if (expr instanceof Operation op) {
-            updateParents(op.getLeft(), op);
-            updateParents(op.getRight(), op);
-        }
-        else if (expr instanceof Group group) 
-            updateParents(group.getBody(), group);
-    }
-    
+public class Parser {    
     /**
      * 
      * @param input
@@ -48,17 +38,12 @@ public class Parser {
             assert substreams.length == 2 : "there should only be a left and right side";
             ExprNode leftExpr = _parseExpression(substreams[0]);
             ExprNode rightExpr = _parseExpression(substreams[1]);
-            Equation eqn = new Equation(leftExpr, rightExpr);
-            updateParents(leftExpr, eqn);
-            updateParents(rightExpr, eqn);
-            return eqn;
+            return new Equation(leftExpr, rightExpr);
         }
         
         ExprNode innerExpr = _parseExpression(stream);
-        Expression expr = new Expression(innerExpr);
-        updateParents(innerExpr, expr);
         assert stream.isExhausted() : "did not consume all tokens";
-        return expr;
+        return new Expression(innerExpr);
     }
     
     private static ExprNode _parseExpression(TokenStream stream) {

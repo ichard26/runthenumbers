@@ -8,7 +8,7 @@ public final class Expression extends RootNode implements ParentNode {
     private ExprNode body;
 
     public Expression(ExprNode body) {
-        this.body = body;
+        setBody(body);
     }
 
     public ExprNode getBody() {
@@ -16,6 +16,7 @@ public final class Expression extends RootNode implements ParentNode {
     }
 
     public void setBody(ExprNode body) {
+        body.setParent(this);
         this.body = body;
     }
     

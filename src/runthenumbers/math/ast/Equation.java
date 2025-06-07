@@ -9,8 +9,8 @@ public final class Equation extends RootNode implements ParentNode {
     private ExprNode right;
 
     public Equation(ExprNode left, ExprNode right) {
-        this.left = left;
-        this.right = right;
+        setLeft(left);
+        setRight(right);
     }
     
     // Getters and setters.
@@ -20,6 +20,7 @@ public final class Equation extends RootNode implements ParentNode {
     }
 
     public void setLeft(ExprNode left) {
+        left.setParent(this);
         this.left = left;
     }
 
@@ -28,7 +29,16 @@ public final class Equation extends RootNode implements ParentNode {
     }
 
     public void setRight(ExprNode right) {
+        right.setParent(this);
         this.right = right;
+    }
+    
+    public void replaceSide(ExprNode side, ExprNode replacement) {
+        assert side == left || side == right : side.toString() + "is not left or right side";
+        if (side == left)
+            setLeft(replacement);
+        else
+            setRight(replacement);
     }
     
     /**

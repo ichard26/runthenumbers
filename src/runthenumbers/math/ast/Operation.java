@@ -11,9 +11,9 @@ public final class Operation extends ExprNode implements ParentNode {
     private ExprNode right;
 
     public Operation(ExprNode left, String operator, ExprNode right) {
-        this.left = left;
+        setLeft(left);
         this.operator = operator;
-        this.right = right;
+        setRight(right);
     }
 
     // Getters and setters.
@@ -23,6 +23,7 @@ public final class Operation extends ExprNode implements ParentNode {
     }
 
     public void setLeft(ExprNode left) {
+        left.setParent(this);
         this.left = left;
     }
 
@@ -35,11 +36,20 @@ public final class Operation extends ExprNode implements ParentNode {
     }
 
     public ExprNode getRight() {
+        right.setParent(this);
         return right;
     }
 
     public void setRight(ExprNode right) {
         this.right = right;
+    }
+    
+    public void replaceOperand(ExprNode operand, ExprNode replacement) {
+        assert operand == left || operand == right : operand.toString() + "is not an operand";
+        if (operand == left)
+            setLeft(replacement);
+        else
+            setRight(replacement);
     }
     
     public boolean is(String... operators) {
