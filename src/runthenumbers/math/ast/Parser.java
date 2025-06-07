@@ -60,6 +60,10 @@ public class Parser {
         ExprNode lhs = null;
         ExprNode rhs;
         Token lhs_token = stream.next();
+        boolean lhs_preceded_by_minus = lhs_token.is("Operator") && lhs_token.getValue().equals("-");
+        if (lhs_preceded_by_minus)
+            lhs_token = stream.next();
+        
         if (lhs_token.is("Number")) {
             lhs = new Number(Double.parseDouble(lhs_token.getValue()));
         }
@@ -72,7 +76,14 @@ public class Parser {
             if (!stream.next().is("RightBracket"))
                 throw new AssertionError("next token should be a closing bracket");
         }
+        else
+            throw new Error("unacceptable LHS token: " + lhs_token);
         
+        // HACK: if the LHS was preceded by a minus sign, multiply the LHS by
+        // -1 to emulate an infix negative operator.
+        if (lhs_preceded_by_minus && (lhs instanceof Variable || lhs instanceof Group))
+            lhs = new Operation(new Number(-1), "*", lhs);
+
         while (!stream.onLastToken()) {
             Token op_token = stream.peek();
             if (op_token.is("RightBracket"))
