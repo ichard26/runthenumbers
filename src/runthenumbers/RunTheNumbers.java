@@ -1,5 +1,9 @@
 package runthenumbers;
 
+import java.awt.FlowLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import runthenumbers.gui.CalculatorGUI;
 import runthenumbers.math.TestSuite;
 import runthenumbers.utils.PrettyPrinter;
 import runthenumbers.utils.prompt.StringPrompt;
@@ -25,6 +29,7 @@ import runthenumbers.math.solve.LinearSolver;
 - [] Sketch out GUI
 - [] Extend unit tests
 - [] Add logging to math package
+- [] Fix infix minus precedence with powers
 */
 
 /**
@@ -39,6 +44,7 @@ public class RunTheNumbers {
     public static void main(String[] args) {
         // Run test suite before starting the application.
         TestSuite.runSelfCheck();
+        runApp();
 
         String input;
         while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
@@ -49,9 +55,9 @@ public class RunTheNumbers {
             }
             else if (result instanceof Equation eqn) {
                 Equation original = eqn.deepcopy();
-                // new PrettyPrinter().print(result);
+                new PrettyPrinter().print(result);
                 Simplifier.simplify(eqn);
-                // new PrettyPrinter().print(result);
+                new PrettyPrinter().print(result);
                 if (!original.equals(eqn))
                     System.out.println("Simplified: " + result.toString());
 
@@ -64,7 +70,17 @@ public class RunTheNumbers {
             }
             System.out.println();
         }
-
     }
 
+    public static void runApp() {
+        JFrame frame = new JFrame("RunTheNumbers");
+        frame.setLayout(new FlowLayout());
+        JPanel calculatorPanel = CalculatorGUI.constructPanel();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(calculatorPanel);
+        frame.pack();
+        frame.setLocation(200, 200);
+        frame.setVisible(true);
+        calculatorPanel.requestFocusInWindow();
+    }
 }
