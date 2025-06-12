@@ -482,6 +482,54 @@ def find_like_terms(expr: Expression):
         return []
 ```
 
+### Detour: AST modification tooling
+
+```python
+def replaceNode(original: ExprNode, replacement: ExprNode):
+    """
+    Replace a expression node in the AST with a new node.
+    The replaced node must be a child node.
+    """
+    replacement.parent = original
+
+    if origin.parent is (Group or Expression):
+        origin.parent.body = replacement
+    elif origin.parent is (Operation, Equation):
+        if original is original.parent.left:
+            origin.parent.left = replacement
+        else:
+            origin.parent.right = replacement
+
+
+def removeNode(node: ExprNode):
+    parent = node.parent
+    if parent is Equation:
+        # replace the target equation side with Number(0)
+    elif parent is Expression:
+        parent.body = Number(0)
+    elif parent is Group:
+        # The parent group will be empty so remove it outright.
+        removeNode(parent)
+    elif parent is Operation:
+        is_left_operand = (node is parent.left)
+        if is_left_operand:
+            if parent.operator is (ADD or MULTIPLY):
+                # They're associative so it's safe to replace the
+                # parent operation with its right operand.
+                replaceNode(parent, parent.right)
+            elif parent.operator is SUBTRACT:
+                # The right operand needs to remain negative, so
+                # update the operation to multiply the RHS by -1.
+                replaceNode(node, Number(-1))
+                parent.operator = MULTIPLY
+            else:
+                raise Exception(
+                    "removing LHS of division is unsupported")
+        else:
+            # The RHS of any operation can be easily removed.
+            replaceNode(parent, parent.left)
+```
+
 ### Back to linear solving
 
 ```python
@@ -518,7 +566,14 @@ def solve(eqn: Equation):
         # Apply inverse operation
         eqn.left
         if eqn.left.operator is ADD or SUBTRACT:
-            inverseValue = getConstantValue(eqn.left)
+            inverseValue = -getConstantValue(eqn.left)
+            if (
+                eqn.left.operator is SUBTRACT
+                and inverseValue is LEFT of eqn.left
+            ):
+                # Constant operand is really negative, so change the
+                # inverse value back to positive.
+                inverseValue *= -1
             eqn.right += inverseValue
         elif eqn.left.operator is MULTIPLY:
             inverseValue = getConstantValue(eqn.left)
