@@ -51,4 +51,12 @@ public class Random {
         }
         System.out.printf(template, parameters);
     }
+
+    public static String formatNumber(double number) {
+        // The double is also an integer, so don't show the .0
+        if (number % 1 == 0)
+            return Integer.toString(Double.valueOf(number).intValue());
+        return Double.toString(number);
+    }
+
 }

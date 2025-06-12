@@ -30,8 +30,10 @@ import runthenumbers.math.ast.RootNode;
 import runthenumbers.math.solve.LinearSolver;
 import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.tokenize.TokenizeError;
+import static runthenumbers.utils.Random.formatNumber;
 
 // https://stackoverflow.com/questions/7971178/find-out-if-text-of-jlabel-exceeds-label-size
+// https://planetjon.ca/java-global-jframe-key-listener-3089
 
 enum AutomaticClear {OFF, ACTIVE_LINE, DISPLAY};
 
@@ -294,11 +296,14 @@ public class CalculatorGUI {
 
                 // Check if the RCL/STO operation is active first
                 if (previousButton.equals("RCL"))
-                    appendToDisplay(variables.getOrDefault(name, .0).toString());
+                    appendToDisplay(formatNumber(variables.getOrDefault(name, .0)));
                 else if (previousButton.equals("STO")) {
                     // HACK: treating the line as a calculation is arguably
                     // overkill but it will handle answers like A = 5 (from solving).
-                    variables.put(name, calculateLine().getAnswer());
+                    CalculationEntry entry = calculateLine();
+                    if (entry == null || entry.getAnswer() == null)
+                        break;
+                    variables.put(name, entry.getAnswer());
                     nextDisplayLine();
                     appendToDisplay("set " + name + " = " + variables.get(name));
                     nextDisplayLine();
@@ -348,23 +353,29 @@ public class CalculatorGUI {
 
     protected static void handleKeyboard(KeyEvent event) {
         char value = event.getKeyChar();
-        if (event.getKeyCode() == KeyEvent.VK_ENTER)
-            calculateLineAndShow();
-        else if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-            backspaceButton.doClick();
-        else if (event.getKeyCode() == KeyEvent.VK_M)
-            handleButton("mode", null);
-        else if (Set.of('1', '2', '3', '4', '5', '7', '8',
-                        '9', '0', 'a', 'b', 'c', '.', ' ',
-                        '=', '+', '-', '*', '/', '^').contains(value))
-            appendToDisplay(String.valueOf(value));
+        switch (event.getKeyCode()) {
+            case KeyEvent.VK_ENTER -> calculateLineAndShow();
+            case KeyEvent.VK_BACK_SPACE -> backspaceButton.doClick();
+            case KeyEvent.VK_M -> modeButton.doClick();
+            case KeyEvent.VK_E -> clearButton.doClick();
+            case KeyEvent.VK_R -> handleButton("variable", "RCL");
+            case KeyEvent.VK_S -> handleButton("variable", "STO");
+            default -> {
+                if (Set.of('1', '2', '3', '4', '5', '7', '8',
+                        '9', '0', '.', ' ', '=', '+', '-',
+                        '*', '/', '^', '(', ')').contains(value))
+                    handleButton("numpad", String.valueOf(value));
+                else if (Set.of('a', 'b', 'c').contains(value))
+                    handleButton("variable", String.valueOf(value));
+            }
+        }
     }
 
     private static void calculateLineAndShow() {
         CalculationEntry entry = calculateLine();
-        if (entry.getAnswer() != null) {
+        if (entry != null && entry.getAnswer() != null) {
             nextDisplayLine();
-            appendToDisplay(entry.getAnswer().toString());
+            appendToDisplay(formatNumber(entry.getAnswer()));
             clearOnNumpadOrVariable = AutomaticClear.ACTIVE_LINE;
         }
     }
@@ -374,6 +385,10 @@ public class CalculatorGUI {
         String input = activeLine.getText();
         RootNode root;
         Double answer;
+
+        if (input.isBlank())
+            return null;
+
         try {
             root = Parser.parse(input);
         } catch (TokenizeError e) {
@@ -381,6 +396,7 @@ public class CalculatorGUI {
             // Clear the whole display.
             clearButton.doClick();
             clearButton.doClick();
+            // Write the error message to the display.
             activeLineIndex = 0;
             clearOnNumpadOrVariable = AutomaticClear.DISPLAY;
             displayLabels[0].setText("ERROR: " + lines[0]);
@@ -391,8 +407,7 @@ public class CalculatorGUI {
 
         Simplifier.simplify(root);
         answer = switch (root) {
-            // TODO: support variables in expressions
-            case Expression expr -> Evaluator.evaluate(expr);
+            case Expression expr -> Evaluator.evaluate(expr, variables);
             case Equation eqn -> new LinearSolver().solve(eqn);
         };
 

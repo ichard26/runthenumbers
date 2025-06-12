@@ -1,6 +1,7 @@
 package runthenumbers.math.solve;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Equation;
 import runthenumbers.math.ast.ExprNode;
@@ -39,7 +40,7 @@ public class Simplifier {
             if (op.getLeft() instanceof Number leftNum
                     && op.getRight() instanceof Number rightNum) {
                 // TODO: figure out logging
-                replaceNode(expr, new Number(Evaluator.evaluate(op)));
+                replaceNode(expr, new Number(Evaluator.evaluate(op, new HashMap())));
             }
         }
         else if (expr instanceof Group group) {

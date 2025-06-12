@@ -1,6 +1,7 @@
 package runthenumbers.math.ast;
 
 import runthenumbers.utils.PrettyPrintable;
+import static runthenumbers.utils.Random.formatNumber;
 
 /**
  * TODO
@@ -35,10 +36,7 @@ public final class Number extends ExprNode implements PrettyPrintable {
      */
     @Override
     public String toString() {
-        // The double is also an integer, so don't show the .0
-        if (value % 1 == 0)
-            return Integer.toString(Double.valueOf(value).intValue());
-        return Double.toString(value);
+        return formatNumber(value);
     }
 
     @Override

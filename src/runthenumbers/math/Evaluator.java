@@ -1,5 +1,6 @@
 package runthenumbers.math;
 
+import java.util.HashMap;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.ExprNode;
 import runthenumbers.math.ast.Group;
@@ -15,19 +16,24 @@ import runthenumbers.math.ast.Variable;
  */
 public class Evaluator {
     public static double evaluate(Expression expr) {
-        return evaluate(expr.getBody());
+        return evaluate(expr, new HashMap());
+    }
+
+    public static double evaluate(Expression expr, HashMap<String, Double> variables) {
+        return evaluate(expr.getBody(), variables);
     }
 
     /**
      * Method Name: evaluate
      * Description: Evaluate a math expression and return final number.
      * @param expr The math expression to evaluate.
+     * @param variables Mapping of variable values to substitute in.
      * @return The expression's answer.
      */
-    public static double evaluate(ExprNode expr) {
+    public static double evaluate(ExprNode expr, HashMap<String, Double> variables) {
         if (expr instanceof Operation op) {
-            double left = evaluate(op.getLeft());
-            double right = evaluate(op.getRight());
+            double left = evaluate(op.getLeft(), variables);
+            double right = evaluate(op.getRight(), variables);
             return switch (op.getOperator()) {
                 case "+" -> left + right;
                 case "-" -> left - right;
@@ -38,11 +44,12 @@ public class Evaluator {
             };
         }
         else if (expr instanceof Group group)
-            return evaluate(group.getBody());
+            return evaluate(group.getBody(), variables);
         else if (expr instanceof Number number)
             return number.getValue();
+        else if (expr instanceof Variable var)
+            return variables.getOrDefault(var.getName(), 0.0);
 
-        assert expr instanceof Variable;
-        throw new Error("cannot evaluate expression with a variable");
+        throw new AssertionError("should be impossible");
     }
 }
