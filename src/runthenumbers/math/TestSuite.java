@@ -51,6 +51,11 @@ public class TestSuite {
         assertEvaluate("2 + 10^3 - 3", 999);
         assertEvaluate("2^2^2", 16);
         assertEvaluate("1 + 2 * 3 - 4 / 5^2", 6.84);
+        // Check tricky precedence.
+        // TODO: fix this
+        assertEvaluate("-5^2", -25);
+        assertEvaluate("(-5)^2", 25);
+        assertEvaluate("-(5)^2", -25);
     }
 
     public static void testFixups() {

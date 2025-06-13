@@ -4,9 +4,10 @@ import runthenumbers.utils.PrettyPrintable;
 import static runthenumbers.utils.Random.formatNumber;
 
 /**
- * TODO
- * @date May 25, 2025
- * @author Richard Si
+ * Class Name: Number
+ * Description: A constant number AST node.
+ * Programmer: Richard Si
+ * Date: May 26, 2025
  */
 public final class Number extends ExprNode implements PrettyPrintable {
     private double value;

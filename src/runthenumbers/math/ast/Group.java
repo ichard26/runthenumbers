@@ -1,9 +1,10 @@
 package runthenumbers.math.ast;
 
 /**
- * TODO
- * @date May 25, 2025
- * @author Richard Si
+ * Class Name: Group
+ * Description: AST node for storing a parenthesized sub-expression.
+ * Programmer: Richard Si
+ * Date: May 26, 2025
  */
 public final class Group extends ExprNode implements ParentNode {
     private ExprNode body;

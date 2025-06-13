@@ -1,9 +1,10 @@
 package runthenumbers.math.ast;
 
 /**
- * TODO
- * @date May 25, 2025
- * @author Richard Si
+ * Class Name: Operation
+ * Description: A math operation AST node, containing two operands.
+ * Programmer: Richard Si
+ * Date: May 26, 2025
  */
 public final class Operation extends ExprNode implements ParentNode {
     private ExprNode left;

@@ -1,8 +1,10 @@
 package runthenumbers.math.ast;
 
 /**
- * @date June 4, 2025
- * @author Richard Si
+ * Class Name: ExprNode
+ * Description: Union of node types that can make up any math expression.
+ * Programmer: Richard Si
+ * Date: June 6, 2025
  */
 public abstract sealed class ExprNode extends Node
         permits Number, Variable, Operation, Group {

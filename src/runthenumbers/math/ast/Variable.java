@@ -3,8 +3,10 @@ package runthenumbers.math.ast;
 import runthenumbers.utils.PrettyPrintable;
 
 /**
- * TODO
- * @author Richard Si
+ * Class Name: Variable
+ * Description: A variable AST node.
+ * Programmer: Richard Si
+ * Date: May 26, 2025
  */
 public final class Variable extends ExprNode implements PrettyPrintable {
     private String name;

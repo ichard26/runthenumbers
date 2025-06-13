@@ -1,8 +1,10 @@
 package runthenumbers.math.ast;
 
 /**
- *
- * @author Richard Si
+ * Class Name: Equation
+ * Description: Parsed math expression.
+ * Programmer: Richard Si
+ * Date: May 30, 2025
  */
 public final class Expression extends RootNode implements ParentNode {
     private ExprNode body;

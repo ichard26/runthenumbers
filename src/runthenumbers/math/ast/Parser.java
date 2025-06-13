@@ -84,7 +84,7 @@ public class Parser {
         if (lhs_preceded_by_minus && (lhs instanceof Variable || lhs instanceof Group))
             lhs = new Operation(new Number(-1), "*", lhs);
 
-        while (!stream.onLastToken()) {
+        while (!stream.isExhausted()) {
             Token op_token = stream.peek();
             if (op_token.is("RightBracket"))
                 // The sub-expression is finished so return the LHS now.

@@ -1,8 +1,10 @@
 package runthenumbers.math.ast;
 
 /**
- * TODO
- * @author Richard Si
+ * Class Name: Equation
+ * Description: Math equation with a left and a right side.
+ * Programmer: Richard Si
+ * Date: May 30, 2025
  */
 public final class Equation extends RootNode implements ParentNode {
     private ExprNode left;
