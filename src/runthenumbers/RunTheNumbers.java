@@ -3,6 +3,7 @@ package runthenumbers;
 import java.awt.FlowLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import runthenumbers.gui.CalculationHistoryGUI;
 import runthenumbers.gui.CalculatorGUI;
 import runthenumbers.math.TestSuite;
 import runthenumbers.utils.PrettyPrinter;
@@ -26,7 +27,7 @@ import runthenumbers.math.solve.LinearSolver;
 - [] Extend simplifier to support distribution, multiply folding, and collection
      of variable terms
 - [x] Implement basic linear solver
-- [] Sketch out GUI
+- [x] Sketch out GUI
 - [] Extend unit tests
 - [] Add logging to math package
 - [] Fix infix minus precedence with powers
@@ -75,9 +76,20 @@ public class RunTheNumbers {
     public static void runApp() {
         JFrame frame = new JFrame("RunTheNumbers");
         frame.setLayout(new FlowLayout());
+
         JPanel calculatorPanel = CalculatorGUI.constructPanel();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(calculatorPanel);
+
+        CalculationHistoryGUI history = new CalculationHistoryGUI();
+        CalculatorGUI.setOnCalculation((e) -> {
+            history.addEntry(e);
+            frame.pack();
+            calculatorPanel.requestFocusInWindow();
+        });
+
+        frame.add(history.constructPanel());
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocation(200, 200);
         frame.setVisible(true);

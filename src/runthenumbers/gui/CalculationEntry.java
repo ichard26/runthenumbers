@@ -1,5 +1,8 @@
 package runthenumbers.gui;
 
+import java.util.Arrays;
+import java.util.Date;
+
 /**
  * Class Name: HistoryEntry
  * Description: Stores the input and result of one calculation.
@@ -49,8 +52,8 @@ public class CalculationEntry {
      * @param line A line from the history file.
      * @return the new HistoryEntry instance.
      */
-    public CalculationEntry fromLine(String line) {
-        String[] tokens = line.split(" | ");
+    public static CalculationEntry fromLine(String line) {
+        String[] tokens = line.split(" \\| ");
         if (tokens.length != 3)
             throw new Error("too many fields");
 

@@ -7,8 +7,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
@@ -59,9 +57,9 @@ class CalculatorKeyListener implements KeyListener {
  */
 public class CalculatorGUI {
     // Constant GUI styling values.
-    private static final Font KEY_FONT = new Font("Ubuntu Bold", Font.BOLD, 22);
-    private static final Font INPUT_FONT = new Font("Ubuntu Mono", Font.PLAIN, 22);
-    private static final Border BORDER_10PX = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+    public static final Font KEY_FONT = new Font("Ubuntu Bold", Font.BOLD, 22);
+    public static final Font INPUT_FONT = new Font("Ubuntu Mono", Font.PLAIN, 22);
+    public static final Border BORDER_10PX = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 
     // Components that must be managed globally.
     private static final JLabel[] displayLabels = new JLabel[3];
@@ -76,6 +74,13 @@ public class CalculatorGUI {
     private static String previousButton = "";
     private static String mathMode = "evaluate";
     private static final HashMap<String, Double> variables = new HashMap<>();
+
+    // Calculator callbacks.
+    private static CalculationCallback onCalculation;
+
+    public static void setOnCalculation(CalculationCallback onCalculation) {
+        CalculatorGUI.onCalculation = onCalculation;
+    }
 
     public static JPanel constructPanel() {
         JPanel panel = new JPanel();
@@ -196,7 +201,10 @@ public class CalculatorGUI {
                 button.setBackground(Color.orange);
                 button.setForeground(Color.white);
                 button.setFont(KEY_FONT.deriveFont(18f));
-                button.addActionListener((e) -> handleButton("variable", value));
+                if (value.equals("RCL") || value.equals("STO"))
+                    button.addActionListener((e) -> handleButton("variable", value));
+                else
+                    button.addActionListener((e) -> handleButton("variable-entry", value));
             } else {
                 // Operator button.
                 button.addActionListener((e) -> handleButton("operator", value));
@@ -271,7 +279,7 @@ public class CalculatorGUI {
         // being entered, in which case assume it's being applied to (likely)
         // the answer of the previous calculation
         if (clearOnNumpadOrVariable != AutomaticClear.OFF && (
-                type.equals("numpad") || type.equals("variable"))) {
+                type.equals("numpad") || type.equals("variable-entry"))) {
             clearButton.doClick();
             // Everything needs to be cleared so issue a double press.
             if (clearOnNumpadOrVariable == AutomaticClear.DISPLAY)
@@ -280,6 +288,8 @@ public class CalculatorGUI {
 
         clearOnNumpadOrVariable = AutomaticClear.OFF;
         // Perform the appropriate action given the button type.
+        // NOTE: RCL/STO aren't handled as they need to be followed by a
+        //       variable entry event anyway.
         switch (type) {
             case "numpad" -> appendToDisplay(name);
             case "operator" -> {
@@ -290,10 +300,9 @@ public class CalculatorGUI {
                     appendToDisplay(" " + name + " ");
             }
             case "variable" -> {
-                if (name.equals("RCL") || name.equals("STO"))
-                    // Do nothing as RCL/STO must be followed by a variable button.
-                    break;
-
+                // Do nothing as RCL/STO need to be followed by a variable.
+            }
+            case "variable-entry" -> {
                 // Check if the RCL/STO operation is active first
                 if (previousButton.equals("RCL"))
                     appendToDisplay(formatNumber(variables.getOrDefault(name, .0)));
@@ -330,10 +339,12 @@ public class CalculatorGUI {
             case "display" -> {
                 if (name.equals("clear")) {
                     // If the active line is already blank, then clear the entire screen.
-                    if (activeLine.getText().isEmpty())
+                    if (activeLine.getText().isEmpty()) {
                         for (JLabel line : displayLabels)
                             line.setText("");
-                    else
+                        activeLine = displayLabels[0];
+                        activeLineIndex = 0;
+                    } else
                         activeLine.setText("");
                 }
                 else if (name.equals("backspace")) {
@@ -348,7 +359,8 @@ public class CalculatorGUI {
         }
 
         // Keep track of the last button pressed for compound actions (aka RCL/STO).
-        previousButton = name;
+        // (ensure it's not null to avoid crashes!)
+        previousButton = name == null ? "" : name;
     }
 
     protected static void handleKeyboard(KeyEvent event) {
@@ -366,7 +378,7 @@ public class CalculatorGUI {
                         '*', '/', '^', '(', ')').contains(value))
                     handleButton("numpad", String.valueOf(value));
                 else if (Set.of('a', 'b', 'c').contains(value))
-                    handleButton("variable", String.valueOf(value));
+                    handleButton("variable-entry", String.valueOf(value));
             }
         }
     }
@@ -377,6 +389,7 @@ public class CalculatorGUI {
             nextDisplayLine();
             appendToDisplay(formatNumber(entry.getAnswer()));
             clearOnNumpadOrVariable = AutomaticClear.ACTIVE_LINE;
+            onCalculation.run(entry);
         }
     }
 
