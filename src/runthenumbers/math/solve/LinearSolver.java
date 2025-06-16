@@ -26,23 +26,34 @@ public class LinearSolver implements Solver {
             ExprNode left = eqn.getLeft();
             Number right = (Number)eqn.getRight();
             assert left instanceof Operation;
-            Operation leftOp = (Operation)left;
 
-            ConstantOperand constant = Simplifier.getConstantFromOperation(leftOp);
-            if (leftOp.is("+") || leftOp.is("-") && !constant.isRightOfMinus()){
+            // Inspect the left outermost operation and perform the inverse
+            // operation on the right side (number).
+            Operation op = (Operation)left;
+            ConstantOperand constant = Simplifier.getConstantFromOperation(op);
+            if (op.is("+") || op.is("-") && !constant.isRightOfMinus()) {
+                // Addition: apply subtraction.
                 right.setValue(right.getValue() - constant.value());
             }
-            else if (leftOp.is("-")) {
+            else if (op.is("-")) {
+                // Subtraction: apply addition.
                 right.setValue(right.getValue() + constant.value());
             }
-            else if (leftOp.is("*")) {
+            else if (op.is("*")) {
+                // Multiplication: apply division.
                 right.setValue(right.getValue() / constant.value());
             }
-            else if (leftOp.is("/") && constant.node() == leftOp.getRight()){
+            else if (op.is("/") && constant.node() == op.getRight()) {
+                // Division: apply multiplication.
                 right.setValue(right.getValue() * constant.value());
             }
-            else
-                throw new Error("not implemented");
+            else if (op.is("^") && constant.node() == op.getRight()) {
+                // Exponentiation: apply square root/cubic root/etc.
+                right.setValue(Math.pow(right.getValue(), 1.0 / constant.value()));
+            }
+
+            // Once the inverse operation has been performed, remove the constant
+            // from the left tree.
             Simplifier.removeNode(constant.node());
         }
 
