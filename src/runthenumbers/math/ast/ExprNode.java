@@ -10,6 +10,8 @@ public abstract sealed class ExprNode extends Node
         permits Number, Variable, Operation, Group {
     private ParentNode parent;
 
+    // Common getters and setters.
+
     public ParentNode getParent() {
         return parent;
     }
@@ -18,6 +20,12 @@ public abstract sealed class ExprNode extends Node
         this.parent = parent;
     }
 
+    /**
+     * Method Name: deepcopy
+     * Description: Create a new instance of this node (and recursively for
+     *               any children nodes).
+     * @return An identical but separate copy of this node.
+     */
     @Override
     abstract public ExprNode deepcopy();
 }

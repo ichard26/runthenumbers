@@ -16,11 +16,6 @@ public final class Number extends ExprNode implements PrettyPrintable {
         this.value = value;
     }
 
-    @Override
-    public Number deepcopy() {
-        return new Number(value);
-    }
-
     // Getters and setters.
 
     public double getValue() {
@@ -32,19 +27,40 @@ public final class Number extends ExprNode implements PrettyPrintable {
     }
 
     /**
-     * TODO
-     * @return
+     * Method Name: deepcopy
+     * Description: Create a new instance of this node (and recursively for
+     *               any children nodes).
+     * @return An identical but separate copy of this node.
+     */
+    @Override
+    public Number deepcopy() {
+        return new Number(value);
+    }
+
+    /**
+     * Method Name: toString
+     * @return The node's human-readable string representation.
      */
     @Override
     public String toString() {
         return formatNumber(value);
     }
 
+    /**
+     * Method Name: toPrettyString
+     * Description: Format the node for display via the PrettyPrinter utility class.
+     * @return The pretty string representation.
+     */
     @Override
     public String toPrettyString() {
         return "Number(" + toString() + ")";
     }
 
+    /**
+     * Method Name: equals
+     * @param obj The other object to compare to.
+     * @return True if the two objects represent the same parse tree.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Number other)

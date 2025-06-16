@@ -5,30 +5,37 @@ import runthenumbers.math.tokenize.TokenStream;
 import runthenumbers.math.tokenize.Tokenizer;
 
 /**
- * TODO
- * TODO: are java records acceptable?
+ * Record Name: BindingPower
+ * Description: Utility tuple for storing the "binding powers" (used for
+ *               precedence) of operators.
  */
 record BindingPower(int left, int right) {};
 
 /**
- * TODO
- * @date May 25, 2025
- * @author Richard Si
+ * Class Name: Parser
+ * Description: Process tokens and convert them into an Abstract Syntax Tree
+ *              (AST) that faithfully represents a math expression/equation
+ *              with BEDMAS support. The AST can be further manipulated and
+ *              inspected to simplify, evaluate, and solve.
+ * Programmer: Richard Si
+ * Date: May 25, 2025
  */
 public class Parser {
     /**
-     *
-     * @param input
-     * @return
+     * Method Name: parse
+     * Description: Convenience method to parse a string directly.
+     * @param input The input string.
+     * @return The math AST.
      */
     public static RootNode parse(String input) {
         return parse(Tokenizer.tokenize(input));
     }
 
     /**
-     * TODO
-     * @param stream
-     * @return
+     * Method Name: parse
+     * Description: Parse an stream of tokens into a math AST.
+     * @param stream The token stream provided by the tokenizer.
+     * @return The math AST.
      */
     public static RootNode parse(TokenStream stream) {
         // TODO: flag expressions with variables
@@ -36,30 +43,44 @@ public class Parser {
         // If there's an equal sign, parse each side of the eqn separately.
         if (substreams.length > 1) {
             assert substreams.length == 2 : "there should only be a left and right side";
-            ExprNode leftExpr = _parseExpression(substreams[0]);
-            ExprNode rightExpr = _parseExpression(substreams[1]);
+            ExprNode leftExpr = parseExpression(substreams[0]);
+            ExprNode rightExpr = parseExpression(substreams[1]);
             return new Equation(leftExpr, rightExpr);
         }
 
-        ExprNode innerExpr = _parseExpression(stream);
+        ExprNode innerExpr = parseExpression(stream);
         assert stream.isExhausted() : "did not consume all tokens";
         return new Expression(innerExpr);
     }
 
-    private static ExprNode _parseExpression(TokenStream stream) {
-        return _parseExpression(stream, 0);
+    /**
+     * Method Name: parseExpression
+     * Description: Thin wrapper over parseExpression that stipulates no
+     *               minimum binding power requirement for parsing.
+     * @param stream
+     * @return
+     */
+    private static ExprNode parseExpression(TokenStream stream) {
+        return parseExpression(stream, 0);
     }
 
     /**
-     * TODO
-     * @param minimumBP
-     * @return
+     * Method Name: parseExpression
+     * Description: The core parsing logic for parsing a math expression,
+     *               returning an operation or the LHS of an operation.
+     * @param minimumBP The minimum operator binding power to construct a new
+     *                   operation (used to handle BEDMAS).
+     * @return The math expression AST.
      */
-    private static ExprNode _parseExpression(TokenStream stream, int minimumBP) {
+    private static ExprNode parseExpression(TokenStream stream, int minimumBP) {
         // NOTE: LHS = left hand side, RHS = right hand side.
         ExprNode lhs = null;
         ExprNode rhs;
         Token lhs_token = stream.next();
+
+        // Check if the LHS is going to be preceded by a minus sign, then treat it
+        // as an unary negative operator. We can't do anything until we've parsed
+        // the LHS though, so just keep track of this and continue to the next token.
         boolean lhs_preceded_by_minus = lhs_token.is("Operator") && lhs_token.getValue().equals("-");
         if (lhs_preceded_by_minus)
             lhs_token = stream.next();
@@ -72,7 +93,7 @@ public class Parser {
         }
         else if (lhs_token.is("LeftBracket")) {
             // We're entering a parenthesized sub-expression (it's recursion time!)
-            lhs = new Group(_parseExpression(stream));
+            lhs = new Group(parseExpression(stream));
             if (!stream.next().is("RightBracket"))
                 throw new AssertionError("next token should be a closing bracket");
         }
@@ -90,12 +111,16 @@ public class Parser {
                 // The sub-expression is finished so return the LHS now.
                 break;
 
-            BindingPower bp = _infixBindingPower(op_token.getValue());
+            // Otherwise, this token is an operator. Check it and decide
+            // whether to return the LHS now or construct a new operation.
+            BindingPower bp = infixBindingPower(op_token.getValue());
             if (bp.left() < minimumBP)
                 break;
 
+            // We've decided to parse an entire operation, move past the
+            // operator token and parse the RHS in a recursive call.
             stream.next();
-            rhs = _parseExpression(stream, bp.right());
+            rhs = parseExpression(stream, bp.right());
             lhs = new Operation(lhs, op_token.getValue(), rhs);
         }
 
@@ -103,11 +128,12 @@ public class Parser {
     }
 
     /**
-     * TODO
-     * @param op
-     * @return
+     * Method Name: infixBindingPower
+     * Description: Return the binding powers of an operator.
+     * @param op The operator.
+     * @return The operator's binding power to its (left, right) operands.
      */
-    private static BindingPower _infixBindingPower(String op) {
+    private static BindingPower infixBindingPower(String op) {
         return switch (op) {
             case "+", "-" -> new BindingPower(1, 2);
             case "*", "/" -> new BindingPower(3, 4);

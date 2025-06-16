@@ -17,11 +17,6 @@ public final class Operation extends ExprNode implements ParentNode {
         setRight(right);
     }
 
-    @Override
-    public Operation deepcopy() {
-        return new Operation((ExprNode)left.deepcopy(), operator, (ExprNode)right.deepcopy());
-    }
-
     // Getters and setters.
 
     public ExprNode getLeft() {
@@ -50,6 +45,12 @@ public final class Operation extends ExprNode implements ParentNode {
         this.right = right;
     }
 
+    /**
+     * Method Name: replaceOperand
+     * Description: Replace the left or right operand with a new expression.
+     * @param operand The original operand node to replace.
+     * @param replacement The replacement expression node.
+     */
     public void replaceOperand(ExprNode operand, ExprNode replacement) {
         assert operand == left || operand == right : operand.toString() + "is not an operand";
         if (operand == left)
@@ -58,6 +59,12 @@ public final class Operation extends ExprNode implements ParentNode {
             setRight(replacement);
     }
 
+    /**
+     * Method Name: is
+     * Description: Check if this operation uses specific operators.
+     * @param operators The desired operators.
+     * @return True if the operation uses a given operator.
+     */
     public boolean is(String... operators) {
         for (String op : operators)
             if (op.equals(this.operator))
@@ -66,8 +73,19 @@ public final class Operation extends ExprNode implements ParentNode {
     }
 
     /**
-     * TODO
-     * @return
+     * Method Name: deepcopy
+     * Description: Create a new instance of this node (and recursively for
+     *               any children nodes).
+     * @return An identical but separate copy of this node.
+     */
+    @Override
+    public Operation deepcopy() {
+        return new Operation(left.deepcopy(), operator, right.deepcopy());
+    }
+
+    /**
+     * Method Name: toString
+     * @return The node's human-readable string representation.
      */
     @Override
     public String toString() {
@@ -85,6 +103,11 @@ public final class Operation extends ExprNode implements ParentNode {
         return left.toString() + " " + operator + " " + right;
     }
 
+    /**
+     * Method Name: equals
+     * @param obj The other object to compare to.
+     * @return True if the two objects represent the same parse tree.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Operation other)

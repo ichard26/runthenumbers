@@ -9,16 +9,20 @@ import runthenumbers.math.solve.LinearSolver;
 import runthenumbers.utils.ANSI;
 
 /**
- * TODO
- * @author Richard Si
+ * Class Name: TestSuite
+ * Description: Small collection of automated tests to verify the math logic
+ *               works as expected.
+ * Programmer: Richard Si
+ * Date: May 31, 2025.
  */
 public class TestSuite {
     private static int passingCases;
     private static int failingCases;
 
     /**
-     * TODO
-     * @return
+     * Method Name: runSelfCheck
+     * Description: Entry point for running all self-tests.
+     * @return Did any cases fail?
      */
     public static boolean runSelfCheck() {
         log("testing evaluation");
@@ -36,7 +40,8 @@ public class TestSuite {
     }
 
     /**
-     * TODO
+     * Method Name: testBasicEvaluation
+     * Description: Test the math expression evaluator.
      */
     public static void testBasicEvaluation() {
         // Check basic operations.
@@ -51,6 +56,8 @@ public class TestSuite {
         assertEvaluate("2 + 10^3 - 3", 999);
         assertEvaluate("2^2^2", 16);
         assertEvaluate("1 + 2 * 3 - 4 / 5^2", 6.84);
+        assertEvaluate("50 - (2*5)", 40);
+        assertEvaluate("-(5)", -5);
         // Check tricky precedence.
         // TODO: fix this
         assertEvaluate("-5^2", -25);
@@ -58,6 +65,10 @@ public class TestSuite {
         assertEvaluate("-(5)^2", -25);
     }
 
+    /**
+     * Method Name: testFixups
+     * Description: Test post-tokenization adjustments.
+     */
     public static void testFixups() {
         assertEvaluate("1-3", -2);
         assertEvaluate("5-1-1-1-1", 1);
@@ -93,13 +104,20 @@ public class TestSuite {
 //        assertSimplify("10 + x + (2x)*2", "10 + 5x");
     }
 
+    /**
+     * Method Name: testSimplificationEquation
+     * Description: Test simplification of equations.
+     */
     public static void testSimplificationEquation() {
         assertSimplify("5 + 4 = x", "9 = x");
         assertSimplify("1*2*3 = 3*2*1", "6 = 6");
         assertSimplify("1 + ((x)) + 3 = 10^2", "4 + x = 100");
     }
 
-
+    /**
+     * Method Name: testLinearSolver
+     * Description: Test the linear single-variable solver.
+     */
     public static void testLinearSolver() {
         assertSolve("x = 0", 0);
         assertSolve("x + 3 = 0", -3);
