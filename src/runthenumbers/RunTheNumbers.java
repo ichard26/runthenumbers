@@ -1,13 +1,13 @@
 package runthenumbers;
 
 import java.awt.FlowLayout;
+import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import runthenumbers.gui.CalculationHistoryGUI;
 import runthenumbers.gui.CalculatorGUI;
 import runthenumbers.math.TestSuite;
 import runthenumbers.utils.PrettyPrinter;
-import runthenumbers.utils.prompt.StringPrompt;
 import runthenumbers.math.Evaluator;
 import runthenumbers.math.ast.Equation;
 import runthenumbers.math.ast.Parser;
@@ -47,8 +47,13 @@ public class RunTheNumbers {
         TestSuite.runSelfCheck();
         runApp();
 
-        String input;
-        while (!(input = new StringPrompt(">>>").ask()).isBlank()) {
+        Scanner scanS = new Scanner(System.in);
+        while (true) {
+            System.out.print(">>> ");
+            String input = scanS.nextLine();
+            if (input.isBlank())
+                break;
+
             RootNode result = Parser.parse(input);
             if (result instanceof Expression expr) {
                 new PrettyPrinter().print(result);
