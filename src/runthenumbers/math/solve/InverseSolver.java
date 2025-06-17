@@ -15,7 +15,7 @@ import runthenumbers.math.ast.Variable;
  * Programmer: Richard Si
  * Date: June 2, 2025
  */
-public class LinearSolver implements Solver {
+public class InverseSolver implements Solver {
 
     /**
      * Method Name: canSolve

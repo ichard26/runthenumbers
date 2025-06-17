@@ -14,7 +14,7 @@ import runthenumbers.math.ast.Parser;
 import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
-import runthenumbers.math.solve.LinearSolver;
+import runthenumbers.math.solve.InverseSolver;
 
 /*
 [TODO LIST]
@@ -63,7 +63,7 @@ public class RunTheNumbers {
                     System.out.println("Simplified: " + result.toString());
 
                 try {
-                    double r = new LinearSolver().solve(eqn).getFirst();
+                    double r = new InverseSolver().solve(eqn).getFirst();
                     System.out.println("Solution: " + r);
                 } catch (Exception e) {
                     e.printStackTrace(System.out);

@@ -5,7 +5,7 @@ import runthenumbers.math.ast.Parser;
 import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.RootNode;
-import runthenumbers.math.solve.LinearSolver;
+import runthenumbers.math.solve.InverseSolver;
 import runthenumbers.utils.ANSI;
 
 /**
@@ -199,7 +199,7 @@ public class TestSuite {
 
         Equation eqn = (Equation)root;
         Simplifier.simplify(eqn);
-        double result = new LinearSolver().solve(eqn).getFirst();
+        double result = new InverseSolver().solve(eqn).getFirst();
         if (result != expected) {
             System.out.printf("""
                       [ERROR] solve

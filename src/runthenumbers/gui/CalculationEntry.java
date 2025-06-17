@@ -1,8 +1,5 @@
 package runthenumbers.gui;
 
-import java.util.Arrays;
-import java.util.Date;
-
 /**
  * Class Name: HistoryEntry
  * Description: Stores the input and result of one calculation.

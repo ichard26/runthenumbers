@@ -38,59 +38,6 @@ public class Simplifier {
     }
 
     /**
-     * Method Name: simplifyExprNode
-     * Description: Simplification implementation entrypoint. Constant
-     *               expressions, like terms, and other unnecessary nodes are
-     *               combined and pruned.
-     * @param expr The expression child node to start from.
-     */
-    private static void simplifyExprNode(ExprNode expr) {
-        // Walk expression AST recursively for operations that contains
-        // constant operands. Matching operations are replaced with
-        // number nodes.
-        if (expr instanceof Operation op) {
-            simplifyExprNode(op.getLeft());
-            simplifyExprNode(op.getRight());
-            if (op.getLeft() instanceof Number leftNum
-                    && op.getRight() instanceof Number rightNum) {
-                // TODO: figure out logging
-                replaceNode(expr, new Number(Evaluator.evaluate(op, new HashMap())));
-            }
-        }
-        else if (expr instanceof Group group) {
-            simplifyExprNode(group.getBody());
-            // Eliminate the group as it simplifies down to a constant.
-            if (group.getBody() instanceof Number num)
-                replaceNode(group, num);
-        }
-
-        collectLikeTerms(expr);
-    }
-
-    /**
-     * Method Name: findLikeTerms
-     * Description: Find like terms that can be combined. Does not recurse into
-     *               parenthesized sub-expressions.
-     * @param expr The expression to start from.
-     * @return The operations containing like terms that can be combined.
-     */
-    private static ArrayList<Operation> findLikeTerms(ExprNode expr) {
-        ArrayList<Operation> addMinusTerms = new ArrayList<>();
-        // Addition/subtraction are associative, thus we can collect and
-        // fold them into a single term.
-        if (expr instanceof Operation op && op.is("+", "-")) {
-            addMinusTerms.addAll(findLikeTerms(op.getLeft()));
-            addMinusTerms.addAll(findLikeTerms(op.getRight()));
-            if (op.getLeft() instanceof Number || op.getRight() instanceof Number)
-                addMinusTerms.add(op);
-        }
-        else if (expr instanceof Group)
-            return new ArrayList<>();
-
-        return addMinusTerms;
-    }
-
-    /**
      * Method Name: getConstantFromOperation
      * Description: Return the constant (number) operand of an operation.
      *               Raises an error if there is no constant operand.
@@ -164,6 +111,59 @@ public class Simplifier {
                 replaceNode(parentOp, parentOp.getLeft());
             }
         }
+    }
+
+    /**
+     * Method Name: simplifyExprNode
+     * Description: Simplification implementation entrypoint. Constant
+     *               expressions, like terms, and other unnecessary nodes are
+     *               combined and pruned.
+     * @param expr The expression child node to start from.
+     */
+    private static void simplifyExprNode(ExprNode expr) {
+        // Walk expression AST recursively for operations that contains
+        // constant operands. Matching operations are replaced with
+        // number nodes.
+        if (expr instanceof Operation op) {
+            simplifyExprNode(op.getLeft());
+            simplifyExprNode(op.getRight());
+            if (op.getLeft() instanceof Number leftNum
+                    && op.getRight() instanceof Number rightNum) {
+                // TODO: figure out logging
+                replaceNode(expr, new Number(Evaluator.evaluate(op, new HashMap())));
+            }
+        }
+        else if (expr instanceof Group group) {
+            simplifyExprNode(group.getBody());
+            // Eliminate the group as it simplifies down to a constant.
+            if (group.getBody() instanceof Number num)
+                replaceNode(group, num);
+        }
+
+        collectLikeTerms(expr);
+    }
+
+    /**
+     * Method Name: findLikeTerms
+     * Description: Find like terms that can be combined. Does not recurse into
+     *               parenthesized sub-expressions.
+     * @param expr The expression to start from.
+     * @return The operations containing like terms that can be combined.
+     */
+    private static ArrayList<Operation> findLikeTerms(ExprNode expr) {
+        ArrayList<Operation> addMinusTerms = new ArrayList<>();
+        // Addition/subtraction are associative, thus we can collect and
+        // fold them into a single term.
+        if (expr instanceof Operation op && op.is("+", "-")) {
+            addMinusTerms.addAll(findLikeTerms(op.getLeft()));
+            addMinusTerms.addAll(findLikeTerms(op.getRight()));
+            if (op.getLeft() instanceof Number || op.getRight() instanceof Number)
+                addMinusTerms.add(op);
+        }
+        else if (expr instanceof Group)
+            return new ArrayList<>();
+
+        return addMinusTerms;
     }
 
     /**

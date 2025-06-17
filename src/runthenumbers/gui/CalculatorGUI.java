@@ -9,7 +9,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -34,7 +31,7 @@ import runthenumbers.math.ast.Equation;
 import runthenumbers.math.ast.Expression;
 import runthenumbers.math.ast.Parser;
 import runthenumbers.math.ast.RootNode;
-import runthenumbers.math.solve.LinearSolver;
+import runthenumbers.math.solve.InverseSolver;
 import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.tokenize.TokenizeError;
 import static runthenumbers.utils.Random.formatNumber;
@@ -437,7 +434,7 @@ public class CalculatorGUI {
         Simplifier.simplify(root);
         answer = switch (root) {
             case Expression expr -> Evaluator.evaluate(expr, variables);
-            case Equation eqn -> new LinearSolver().solve(eqn).getFirst();
+            case Equation eqn -> new InverseSolver().solve(eqn).getFirst();
         };
 
         return new CalculationEntry(mathMode, input, answer);
@@ -472,7 +469,7 @@ public class CalculatorGUI {
             Simplifier.simplify(ast);
             double answer = switch (ast) {
                 case Expression expr -> Evaluator.evaluate(expr, variables);
-                case Equation eqn -> new LinearSolver().solve(eqn).getFirst();
+                case Equation eqn -> new InverseSolver().solve(eqn).getFirst();
             };
             results.add(new CalculationEntry(mathMode, input, answer));
         }
