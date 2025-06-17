@@ -63,7 +63,7 @@ public class RunTheNumbers {
                     System.out.println("Simplified: " + result.toString());
 
                 try {
-                    double r = new LinearSolver().solve(eqn);
+                    double r = new LinearSolver().solve(eqn).getFirst();
                     System.out.println("Solution: " + r);
                 } catch (Exception e) {
                     e.printStackTrace(System.out);

@@ -199,7 +199,7 @@ public class TestSuite {
 
         Equation eqn = (Equation)root;
         Simplifier.simplify(eqn);
-        double result = new LinearSolver().solve(eqn);
+        double result = new LinearSolver().solve(eqn).getFirst();
         if (result != expected) {
             System.out.printf("""
                       [ERROR] solve

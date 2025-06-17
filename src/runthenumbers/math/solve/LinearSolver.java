@@ -1,5 +1,7 @@
 package runthenumbers.math.solve;
 
+import java.util.Arrays;
+import java.util.List;
 import runthenumbers.math.ast.Equation;
 import runthenumbers.math.ast.ExprNode;
 import runthenumbers.math.ast.Number;
@@ -7,19 +9,36 @@ import runthenumbers.math.ast.Operation;
 import runthenumbers.math.ast.Variable;
 
 /**
- * TODO
- * @author Richard Si
+ * Class Name: LinearSolver
+ * Description: Solver that can apply inverse operations to solve single
+ *              variable equations.
+ * Programmer: Richard Si
+ * Date: June 2, 2025
  */
 public class LinearSolver implements Solver {
 
+    /**
+     * Method Name: canSolve
+     * Description: Determine if this equation can (likely) be solved by
+     *               this solver.
+     * @param eqn The equation to check.
+     * @return True if the equation can likely be solved and thus it can be
+     *          attempted. False otherwise.
+     */
     @Override
     public boolean canSolve(Equation eqn) {
         // TODO: actually check the equation...
         return true;
     }
 
+    /**
+     * Method Name: solve
+     * Description: Solve the equation and return the solutions.
+     * @param eqn The equation to solve.
+     * @return The solutions, if there are any.
+     */
     @Override
-    public double solve(Equation eqn) {
+    public List<Double> solve(Equation eqn) {
         assert eqn.getRight() instanceof Number;
 
         while (!(eqn.getLeft() instanceof Variable)) {
@@ -58,7 +77,7 @@ public class LinearSolver implements Solver {
         }
 
         ExprNode right = eqn.getRight();
-        return ((Number)right).getValue();
+        return Arrays.asList(((Number)right).getValue());
     }
 
 }

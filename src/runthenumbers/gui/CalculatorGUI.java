@@ -9,12 +9,21 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -62,6 +71,7 @@ public class CalculatorGUI {
     public static final Border BORDER_10PX = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 
     // Components that must be managed globally.
+    private static JPanel rootPanel;
     private static final JLabel[] displayLabels = new JLabel[3];
     private static JLabel activeLine;
     private static JButton clearButton;
@@ -83,17 +93,17 @@ public class CalculatorGUI {
     }
 
     public static JPanel constructPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.setPreferredSize(new Dimension(380, 500));
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new BorderLayout());
+        rootPanel.setPreferredSize(new Dimension(380, 500));
         // Piece together the calculator UI.
-        panel.add(constructDisplayPanel(), BorderLayout.PAGE_START);
-        panel.add(constructNumpad(), BorderLayout.CENTER);
-        panel.add(constructOperatorVariablePanel(), BorderLayout.LINE_END);
-        panel.add(constructCalcButtons(), BorderLayout.PAGE_END);
+        rootPanel.add(constructDisplayPanel(), BorderLayout.PAGE_START);
+        rootPanel.add(constructNumpad(), BorderLayout.CENTER);
+        rootPanel.add(constructOperatorVariablePanel(), BorderLayout.LINE_END);
+        rootPanel.add(constructCalcButtons(), BorderLayout.PAGE_END);
         // Install keyboard event handler.
-        panel.addKeyListener(new CalculatorKeyListener());
-        return panel;
+        rootPanel.addKeyListener(new CalculatorKeyListener());
+        return rootPanel;
     }
 
     /**
@@ -126,10 +136,15 @@ public class CalculatorGUI {
         }
         activeLine = displayLabels[0];
 
-        // Construct the clear/delete button panel.
+        // Construct the bulk calculation button.
         JPanel commandPanel = new JPanel();
         commandPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        JButton bulkButton = new JButton("Bulk CALC");
+        bulkButton.addActionListener((e) -> handleButton("bulk", null));
+        commandPanel.add(bulkButton);
+        commandPanel.add(Box.createHorizontalStrut(105));
 
+        // Construct the clear/delete button panel.
         clearButton = new JButton("Clear");
         clearButton.addActionListener((e) -> handleButton("display", "clear"));
         commandPanel.add(clearButton);
@@ -355,6 +370,7 @@ public class CalculatorGUI {
                     activeLine.setText(contents.substring(0, contents.length() - 1));
                 }
             }
+            case "bulk" -> bulkCalculation();
             default -> throw new AssertionError("unexpected button type: " + type);
         }
 
@@ -421,10 +437,49 @@ public class CalculatorGUI {
         Simplifier.simplify(root);
         answer = switch (root) {
             case Expression expr -> Evaluator.evaluate(expr, variables);
-            case Equation eqn -> new LinearSolver().solve(eqn);
+            case Equation eqn -> new LinearSolver().solve(eqn).getFirst();
         };
 
         return new CalculationEntry(mathMode, input, answer);
+    }
+
+    private static void bulkCalculation() {
+        // See also: https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
+        LinkedHashMap<String, RootNode> inputs = new LinkedHashMap<>();
+        ArrayList<CalculationEntry> results = new ArrayList<>();
+        JFileChooser fc = new JFileChooser();
+
+        // Step one: ask the user to provide a file with a list of expressions
+        // to evaluate or equations to solve.
+        if (fc.showOpenDialog(rootPanel) != JFileChooser.APPROVE_OPTION)
+            return;
+
+        Scanner reader;
+        try {
+            reader = new Scanner(fc.getSelectedFile());
+        } catch (FileNotFoundException ex) {
+            return;
+        }
+
+        while (reader.hasNextLine()) {
+            String line = reader.nextLine();
+            inputs.put(line, Parser.parse(line));
+        }
+
+        // Step two: actually evaluate/solve these inputs.
+        for (String input : inputs.keySet()) {
+            RootNode ast = inputs.get(input);
+            Simplifier.simplify(ast);
+            double answer = switch (ast) {
+                case Expression expr -> Evaluator.evaluate(expr, variables);
+                case Equation eqn -> new LinearSolver().solve(eqn).getFirst();
+            };
+            results.add(new CalculationEntry(mathMode, input, answer));
+        }
+
+        // Step three: present the results by adding them to the history.
+        for (CalculationEntry e : results)
+            onCalculation.run(e);
     }
 
 }
