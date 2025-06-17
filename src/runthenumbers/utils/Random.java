@@ -3,8 +3,10 @@ package runthenumbers.utils;
 import java.util.InputMismatchException;
 
 /**
- *
- * @author Richard Si
+ * Class Name: Random
+ * Description: Collection of utility functions.
+ * Programmer: Richard Si
+ * Date: June 2, 2025.
  */
 public class Random {
     /**

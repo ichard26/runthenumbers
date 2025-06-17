@@ -27,8 +27,10 @@ interface Callback {
 }
 
 /**
- *
- * @author Richard Si
+ * Class Name: CalculationHistoryGUI
+ * Description: Manages the history GUI panel.
+ * Programmer: Richard Si
+ * Date: June 13, 2025.
  */
 public class CalculationHistoryGUI {
     private static final Font ENTRY_FONT = CalculatorGUI.KEY_FONT.deriveFont(Font.PLAIN).deriveFont(16f);
@@ -37,6 +39,9 @@ public class CalculationHistoryGUI {
     private JPanel allEntryPanel;
     private final ArrayList<CalculationEntry> entries = new ArrayList<>();
     private boolean sortByTime = true;
+
+    // No getters or setters as no outside code should be inspecting or messing
+    // with these fields.
 
     public CalculationHistoryGUI() {
         Scanner reader;
@@ -51,6 +56,11 @@ public class CalculationHistoryGUI {
             entries.add(CalculationEntry.fromLine(reader.nextLine()));
     }
 
+    /**
+     * Method Name: constructPanel
+     * Description: Construct Swing panel for the history GUI.
+     * @return The scrollable panel.
+     */
     public JScrollPane constructPanel() {
         rootPanel = new JPanel();
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.PAGE_AXIS));
@@ -59,7 +69,7 @@ public class CalculationHistoryGUI {
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
         // Sort mode switcher.
-        JButton sortButton = new JButton("Sort by time");
+        JButton sortButton = new JButton("Sort by value");
         sortButton.addActionListener((e) -> {
             sortByTime = !sortByTime;
             sortButton.setText("Sort by " + (sortByTime ? "time" : "answer"));
@@ -99,7 +109,12 @@ public class CalculationHistoryGUI {
         renderEntries();
     }
 
+    /**
+     * Method Name: renderEntries
+     * Description: Render the stored calculation entries to the GUI panel.
+     */
     private void renderEntries() {
+        // Remove all existing entries from the GUI.
         allEntryPanel.removeAll();
 
         ArrayList<CalculationEntry> sortedEntries;
@@ -110,6 +125,9 @@ public class CalculationHistoryGUI {
 
         for (CalculationEntry e : sortedEntries.reversed()) {
             JPanel entryPanel = constructEntryPanel(e, entries.indexOf(e) + 1, (c) -> {
+                // Upon the press of "remove", the entry needs to be removed
+                // from history (and synced with the file) and the panel needs
+                // to be rerendered.
                 entries.remove(e);
                 saveToFile();
                 renderEntries();

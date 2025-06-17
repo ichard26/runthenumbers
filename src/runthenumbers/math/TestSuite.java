@@ -8,6 +8,9 @@ import runthenumbers.math.ast.RootNode;
 import runthenumbers.math.solve.InverseSolver;
 import runthenumbers.utils.ANSI;
 
+// NOTE: I threw this together quickly. This is a nonessential portion of the project
+// thus the code quality is not the best.
+
 /**
  * Class Name: TestSuite
  * Description: Small collection of automated tests to verify the math logic
@@ -78,6 +81,10 @@ public class TestSuite {
         assertSimplify("x-5", "x - 5");
     }
 
+    /**
+     * Method Name: testSimplification
+     * Description: Test full AST simplification.
+     */
     public static void testSimplification() {
         // Without variables. Constant folding will simplify these down to a number.
         assertSimplify("1-3", "-2");
@@ -136,9 +143,10 @@ public class TestSuite {
     }
 
     /**
-     * TODO
-     * @param input
-     * @param expected
+     * Method Name: assertEvaluate
+     * Description: Test the evaluation functionality against a known answer.
+     * @param input The expression to test.
+     * @param expected The expected answer.
      */
     private static void assertEvaluate(String input, double expected) {
         double result = -1000000;
@@ -173,6 +181,13 @@ public class TestSuite {
         }
     }
 
+    /**
+     * Method Name: assertSimplify
+     * Description: Test the simplification functionality against a known
+     *               simplified version.
+     * @param input The expression/equation to test.
+     * @param expected The expected simplified version of the expression/equation.
+     */
     private static void assertSimplify(String input, String expected) {
         RootNode actualResult = Parser.parse(input);
         RootNode expectedResult = Parser.parse(expected);
@@ -192,6 +207,12 @@ public class TestSuite {
         }
     }
 
+    /**
+     * Method Name: assertSolve
+     * Description: Test the solving functionality against a known result.
+     * @param input The equation to test.
+     * @param expected The expected answer.
+     */
     private static void assertSolve(String input, double expected) {
         RootNode root = Parser.parse(input);
         if (root instanceof Expression)
@@ -215,11 +236,11 @@ public class TestSuite {
         }
     }
 
-
     /**
-     * TODO
-     * @param input
-     * @return
+     * Method Name: evaluate
+     * Description: Convenience method to evaluate a math expression.
+     * @param input The math expression to evaluate.
+     * @return The expression's answer.
      */
     private static double evaluate(String input) {
         RootNode result = Parser.parse(input);
@@ -229,6 +250,12 @@ public class TestSuite {
         throw new Error("Expected expression, got equation!");
     }
 
+    /**
+     * Method Name: log
+     * Description: Log a self-check message to the console.
+     * @param template Printf template.
+     * @param args Print arguments.
+     */
     private static void log(String template, Object... args) {
         System.out.printf("[self-check] " + template + "\n", args);
     }

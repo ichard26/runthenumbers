@@ -36,14 +36,15 @@ import runthenumbers.math.solve.Simplifier;
 import runthenumbers.math.tokenize.TokenizeError;
 import static runthenumbers.utils.Random.formatNumber;
 
-// https://stackoverflow.com/questions/7971178/find-out-if-text-of-jlabel-exceeds-label-size
-// https://planetjon.ca/java-global-jframe-key-listener-3089
-
+/**
+ * Enum Name: AutomaticClear
+ * Description: Modes for automatic clearing of the calculator display.
+ */
 enum AutomaticClear {OFF, ACTIVE_LINE, DISPLAY};
 
 /**
- *
- * @author Richard Si
+ * Class Name: CalculatorKeyListener
+ * Description: Listens to keyboard input and forwards them to the calculator GUI.
  */
 class CalculatorKeyListener implements KeyListener {
     @Override
@@ -58,8 +59,10 @@ class CalculatorKeyListener implements KeyListener {
 }
 
 /**
- * @date May 23, 2025
- * @author Richard Si
+ * Class Name: CalculatorGUI
+ * Description: The actual basic calculator GUI.
+ * Programmer: Richard Si
+ * Date: June 10, 2025.
  */
 public class CalculatorGUI {
     // Constant GUI styling values.
@@ -85,10 +88,17 @@ public class CalculatorGUI {
     // Calculator callbacks.
     private static CalculationCallback onCalculation;
 
+    // This is the only getter because nothing else should be accessed or modified
+    // by outside code.
     public static void setOnCalculation(CalculationCallback onCalculation) {
         CalculatorGUI.onCalculation = onCalculation;
     }
 
+    /**
+     * Method Name: constructPanel
+     * Description: Construct Swing panel for the calculator.
+     * @return The UI component panel.
+     */
     public static JPanel constructPanel() {
         rootPanel = new JPanel();
         rootPanel.setLayout(new BorderLayout());
@@ -105,7 +115,7 @@ public class CalculatorGUI {
 
     /**
      * Method Name: constructDisplayPanel
-     * Description: Construct display UI.
+     * Description: Construct calculator display UI.
      * @return The UI component panel.
      */
     private static JPanel constructDisplayPanel() {
@@ -376,15 +386,25 @@ public class CalculatorGUI {
         previousButton = name == null ? "" : name;
     }
 
+    /**
+     * Method Name: handleKeyboard
+     * Description: Handler for keyboard input.
+     * @param event The keyboard input event.
+     */
     protected static void handleKeyboard(KeyEvent event) {
         char value = event.getKeyChar();
         switch (event.getKeyCode()) {
             case KeyEvent.VK_ENTER -> calculateLineAndShow();
             case KeyEvent.VK_BACK_SPACE -> backspaceButton.doClick();
+            // M key = switch mode.
             case KeyEvent.VK_M -> modeButton.doClick();
+            // E key = clear button.
             case KeyEvent.VK_E -> clearButton.doClick();
+            // R key = RCL
             case KeyEvent.VK_R -> handleButton("variable", "RCL");
+            // S key = STO
             case KeyEvent.VK_S -> handleButton("variable", "STO");
+            // Otherwise, pass the numpad/variable keys as normal.
             default -> {
                 if (Set.of('1', '2', '3', '4', '5', '7', '8',
                         '9', '0', '.', ' ', '=', '+', '-',
@@ -396,9 +416,15 @@ public class CalculatorGUI {
         }
     }
 
+    /**
+     * Method Name: calculateLineAndShow
+     * Description: Wrapper over calculateLine() that displays the answer
+     *              on the display.
+     */
     private static void calculateLineAndShow() {
         CalculationEntry entry = calculateLine();
         if (entry != null && entry.getAnswer() != null) {
+            // Show the answer on the next available line.
             nextDisplayLine();
             appendToDisplay(formatNumber(entry.getAnswer()));
             clearOnNumpadOrVariable = AutomaticClear.ACTIVE_LINE;
@@ -406,6 +432,11 @@ public class CalculatorGUI {
         }
     }
 
+    /**
+     * Method Name: calculateLine
+     * Description: Evaluate/solve the active line.
+     * @return The new calculation entry, if the calculation was performed.
+     */
     private static CalculationEntry calculateLine() {
         // TODO: error handling
         String input = activeLine.getText();
@@ -440,6 +471,10 @@ public class CalculatorGUI {
         return new CalculationEntry(mathMode, input, answer);
     }
 
+    /**
+     * Method Name: bulkCalculation
+     * Description: Bulk calculate a list of expressions/equations.
+     */
     private static void bulkCalculation() {
         // See also: https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
         LinkedHashMap<String, RootNode> inputs = new LinkedHashMap<>();

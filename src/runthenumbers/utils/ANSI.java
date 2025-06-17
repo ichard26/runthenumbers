@@ -1,5 +1,11 @@
 package runthenumbers.utils;
 
+/**
+ * Class Name: ANSI
+ * Description: Console styling control codes.
+ * Programmer: Richard Si
+ * Date: June 5, 2025.
+ */
 final public class ANSI {
     public static final String RESET = "\033[0m";
     public static final String BOLD = "\033[1m";

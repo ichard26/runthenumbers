@@ -1,7 +1,7 @@
 package runthenumbers.gui;
 
 /**
- * Class Name: HistoryEntry
+ * Class Name: CalculationEntry
  * Description: Stores the input and result of one calculation.
  * Programmer: Richard Si
  * Date: June 9, 2025

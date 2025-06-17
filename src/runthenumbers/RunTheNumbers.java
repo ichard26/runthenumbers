@@ -22,7 +22,7 @@ import runthenumbers.math.solve.InverseSolver;
 - [x] Port over calculator math implementation
 - [x] Extend math impl. to handle variables and equations
 - [x] Extend tokenizer and parser with fix-ups and error handling
-- [] DOCUMENTATION (class, methods) & COMMENT CHECKPOINT
+- [x] DOCUMENTATION (class, methods) & COMMENT CHECKPOINT
 - [x] Complete simplification barebones
 - [] Extend simplifier to support distribution, multiply folding, and collection
      of variable terms
@@ -34,8 +34,10 @@ import runthenumbers.math.solve.InverseSolver;
 */
 
 /**
- *
- * @author Richard Si
+ * Class Name: RunTheNumbers
+ * Description: Program entrypoint.
+ * Programmer: Richard Si
+ * Date: May 29, 2025.
  */
 public class RunTheNumbers {
 
@@ -47,6 +49,8 @@ public class RunTheNumbers {
         TestSuite.runSelfCheck();
         runApp();
 
+        // This is debug code that allows quick interaction with the math
+        // portion of the project. I'm not commenting this.
         Scanner scanS = new Scanner(System.in);
         while (true) {
             System.out.print(">>> ");
@@ -78,20 +82,25 @@ public class RunTheNumbers {
         }
     }
 
+    /**
+     * Method Name: runApp
+     * Description: Calculator GUI entrypoint.
+     */
     public static void runApp() {
         JFrame frame = new JFrame("RunTheNumbers");
         frame.setLayout(new FlowLayout());
 
+        // Construct the calculator panel.
         JPanel calculatorPanel = CalculatorGUI.constructPanel();
         frame.add(calculatorPanel);
 
+        // Construct the history panel and link the calculator GUI to it.
         CalculationHistoryGUI history = new CalculationHistoryGUI();
         CalculatorGUI.setOnCalculation((e) -> {
             history.addEntry(e);
             frame.pack();
             calculatorPanel.requestFocusInWindow();
         });
-
         frame.add(history.constructPanel());
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
