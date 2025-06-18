@@ -1,0 +1,4 @@
+sphinx-build
+furo
+myst-parser
+sphinxcontrib.plantuml

@@ -1,12 +1,13 @@
 # Implementation Notes: runthenumbers.math
 
-> [!NOTE]
-> A basic Python calculator has already been written with tokenization,
-> parsing, and evaluation functionality, thus a large part of the Java
-> implementation is simply a port of the Python code. The solving,
-> quality-of-life, and variable features are new, however.
+```{admonition} Note
+A basic Python calculator has already been written with tokenization,
+parsing, and evaluation functionality, thus a large part of the Java
+implementation is simply a port of the Python code. The solving,
+quality-of-life, and variable features are new, however.
+```
 
-```plantuml
+```{plantuml}
 start
 :Math Input;
 :Initial tokenization;
@@ -170,7 +171,7 @@ if stream.count("=") > 1:
 
 ### UML Diagram
 
-```plantuml
+```{plantuml}
 @startuml
 set separator none
 package math.tokenize {
@@ -196,7 +197,7 @@ class Token {
 }
 
 Token::position ..> Span : contains
-note left of Token::type
+note right of Token::type
   **Valid types**: 1) Number
                         2) Variable
                         3) Operator
@@ -272,7 +273,7 @@ See the UML diagram for more information.
 
 ### UML Diagram
 
-```plantuml
+```{plantuml}
 @startuml
 set separator none
 package math.ast {
@@ -337,17 +338,51 @@ Parser ..> BindingPower : uses
 [regular expressions]: https://en.wikipedia.org/wiki/Regular_expression
 [abstract syntax tree]: https://en.wikipedia.org/wiki/Abstract_syntax_tree
 
-## Equation Solving
+## Expression evaluation
 
-> [!IMPORTANT]
-> There are certainly proper/efficient algorithms for solving equations out
-> there, but I wanted to challenge myself to devise one that could handle
-> basic equations. The solving functionality will consequently be quite
-> limited.
+As the parser ensures the AST is constructed in accordance to BEDMAS rules, it is simply
+a matter of recursively walking the AST, progressively evaluating nodes and their children
+until numbers are encountered, which allow for their parent nodes to be evaluated.
+
+```python
+def evaluate(expr: Expression, variables: dict[str, float]):
+    if expr is Number:
+        return expr.value
+    elif expr is Variable:
+        return variables[expr.name]
+    elif expr is Group:
+        return evaluate(expr.body, variables)
+    elif expr is Operation:
+        left = evaluate(expr.left, variables)
+        right = evaluate(expr.right, variables)
+        return apply expr.operator to left AND right
+```
 
 ### UML Diagram
 
-```plantuml
+```{plantuml}
+set separator none
+package math {
+  class Evaluator
+}
+
+class Evaluator {
+  +evaluate(Expression expr) : double
+}
+```
+
+## Equation solving
+
+```{admonition} Important
+There are certainly proper/efficient algorithms for solving equations out
+there, but I wanted to challenge myself to devise one that could handle
+basic equations. The solving functionality will consequently be quite
+limited.
+```
+
+### UML Diagram
+
+```{plantuml}
 set separator none
 package math.solve {
   class Solver
@@ -373,6 +408,57 @@ class Simplifier {
 }
 ```
 
+### Final AST Hierarchy UML Diagram
+
+I reworked the AST node hierarchy numerous times after designing the above
+hierarchy. This is approximiately the final product. I hope this helps to
+understand the spawling codebase.
+
+```{plantuml}
+abstract class Node {
+    +{abstract} toString() : String
+    +{abstract} equals() : boolean
+    +{abstract} deepcopy() : Node
+}
+abstract class RootNode implements Node {}
+interface ParentNode {}
+
+class Expression extends RootNode implements ParentNode {
+    -ExprNode body
+    +Getters/Setters()
+}
+class Equation extends RootNode implements ParentNode {
+    -ExprNode left
+    -ExprNode right
+    +Getters/Setters()
+    +replaceSide(ExprNode side, ExprNode replacement) : void
+}
+
+abstract class ExprNode implements Node {
+    -ParentNode parent
+    +Getters/Setters()
+}
+class Number extends ExprNode {
+    -double value
+    +Getters/Setters
+}
+class Variable extends ExprNode {
+    -String name
+    +Getters/Setters()
+}
+class Group extends ExprNode implements ParentNode {
+    -ExprNode body
+}
+class Operation extends ExprNode implements ParentNode {
+    -ExprNode left
+    -String operator
+    -ExprNode right
+    +Getters/Setters()
+    +replaceOperand(ExprNode operand, ExprNode replacement) : void
+    +is(String... operators) : boolean
+}
+```
+
 ### Linear single variable solving
 
 To solve linear single variable equations, the calculator needs to be taught
@@ -395,7 +481,7 @@ then solving those is left as a reach goal.
 It's easier to explain the algorithm using an activity diagram than with
 pseudocode.
 
-```plantuml
+```{plantuml}
 start
 while (Left/right side can be simplified?)
   :Simplify side;
@@ -586,21 +672,6 @@ def solve(eqn: Equation):
 
     # The variable is isolated on the left, we're done! 🎉
     return eqn.right
-```
-
-```plantuml
-abstract class Node {}
-abstract class RootNode implements Node {}
-interface ParentNode {}
-
-class Expression extends RootNode implements ParentNode {}
-class Equation extends RootNode implements ParentNode {}
-
-abstract class ExprNode implements Node {}
-class Number extends ExprNode {}
-class Variable extends ExprNode {}
-class Group extends ExprNode implements ParentNode {}
-class Operation extends ExprNode implements ParentNode {}
 ```
 
 ### Quadratic single variable solving
