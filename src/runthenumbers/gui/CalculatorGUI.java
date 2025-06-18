@@ -115,7 +115,8 @@ public class CalculatorGUI {
 
     /**
      * Method Name: constructDisplayPanel
-     * Description: Construct calculator display UI.
+     * Description: Construct calculator display UI (which happens to contain
+     *               some buttons too.. I know this isn't the best design).
      * @return The UI component panel.
      */
     private static JPanel constructDisplayPanel() {
@@ -446,6 +447,8 @@ public class CalculatorGUI {
         if (input.isBlank())
             return null;
 
+        // Attempt to parse the current line. Show any tokenization errors on
+        // the display.
         try {
             root = Parser.parse(input);
         } catch (TokenizeError e) {
@@ -460,6 +463,17 @@ public class CalculatorGUI {
             displayLabels[1].setText(lines[1]);
             displayLabels[2].setText(lines[2]);
             return null;
+        } catch (Error e) {
+            // Unknown error. Just tell the user there was an internal error.
+            e.printStackTrace(System.err);
+            // Clear the whole display.
+            clearButton.doClick();
+            clearButton.doClick();
+            activeLineIndex = 0;
+            clearOnNumpadOrVariable = AutomaticClear.DISPLAY;
+            displayLabels[0].setText("INTERNAL ERROR");
+            displayLabels[1].setText(e.getMessage());
+            return null;
         }
 
         Simplifier.simplify(root);
@@ -468,7 +482,7 @@ public class CalculatorGUI {
             case Equation eqn -> new InverseSolver().solve(eqn).getFirst();
         };
 
-        return new CalculationEntry(mathMode, input, answer);
+        return new CalculationEntry(root instanceof Equation ? "solve" : "evaluate", input, answer);
     }
 
     /**
@@ -495,18 +509,16 @@ public class CalculatorGUI {
 
         while (reader.hasNextLine()) {
             String line = reader.nextLine();
+            if (line.isBlank())
+                continue;
             inputs.put(line, Parser.parse(line));
         }
 
         // Step two: actually evaluate/solve these inputs.
         for (String input : inputs.keySet()) {
             RootNode ast = inputs.get(input);
-            Simplifier.simplify(ast);
-            double answer = switch (ast) {
-                case Expression expr -> Evaluator.evaluate(expr, variables);
-                case Equation eqn -> new InverseSolver().solve(eqn).getFirst();
-            };
-            results.add(new CalculationEntry(mathMode, input, answer));
+            activeLine.setText(input);
+            results.add(calculateLine());
         }
 
         // Step three: present the results by adding them to the history.

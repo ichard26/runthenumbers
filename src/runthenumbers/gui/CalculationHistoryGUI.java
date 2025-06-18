@@ -52,8 +52,11 @@ public class CalculationHistoryGUI {
             ex.printStackTrace(System.err);
             return;
         }
-        while (reader.hasNextLine())
-            entries.add(CalculationEntry.fromLine(reader.nextLine()));
+        while (reader.hasNextLine()) {
+            String line = reader.nextLine();
+            if (!line.isBlank())
+                entries.add(CalculationEntry.fromLine(reader.nextLine()));
+        }
     }
 
     /**
@@ -69,10 +72,10 @@ public class CalculationHistoryGUI {
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
         // Sort mode switcher.
-        JButton sortButton = new JButton("Sort by value");
+        JButton sortButton = new JButton("Sort by answer");
         sortButton.addActionListener((e) -> {
             sortByTime = !sortByTime;
-            sortButton.setText("Sort by " + (sortByTime ? "time" : "answer"));
+            sortButton.setText("Sort by " + (sortByTime ? "answer" : "time"));
             renderEntries();
         });
         controlPanel.add(sortButton);
