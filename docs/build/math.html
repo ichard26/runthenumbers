@@ -1,0 +1,993 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="search" title="Search" href="search.html" /><link rel="next" title="Implementation Notes: runthenumbers.gui" href="gui.html" /><link rel="prev" title="RunTheNumbers" href="index.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>Implementation Notes: runthenumbers.math - RunTheNumbers documentation v1.0.0b1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+
+
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+
+      }
+    }
+  }
+</style></head>
+  <body>
+
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">RunTheNumbers documentation v1.0.0b1</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+
+
+  <span class="sidebar-brand-text">RunTheNumbers documentation v1.0.0b1</span>
+
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Implementation Notes: runthenumbers.math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">Implementation Notes: runthenumbers.gui</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/math.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="implementation-notes-runthenumbers-math">
+<h1>Implementation Notes: runthenumbers.math<a class="headerlink" href="#implementation-notes-runthenumbers-math" title="Link to this heading">¶</a></h1>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>A basic Python calculator has already been written with tokenization,
+parsing, and evaluation functionality, thus a large part of the Java
+implementation is simply a port of the Python code. The solving,
+quality-of-life, and variable features are new, however.</p>
+</div>
+<p class="plantuml">
+<img src="_images/plantuml-d8de0c737b60461a5c4c964aba68b8964ddfbca8.png" alt="start
+:Math Input;
+:Initial tokenization;
+:Apply adjustments to tokens;
+:Validate token stream;
+:Parse into AST;
+stop"/>
+</p>
+<section id="expression-tokenization">
+<h2>Expression tokenization<a class="headerlink" href="#expression-tokenization" title="Link to this heading">¶</a></h2>
+<p>The Python implementation was inspired by <a class="reference external" href="https://docs.python.org/3/library/re.html#writing-a-tokenizer">https://docs.python.org/3/library/re.html#writing-a-tokenizer</a>.</p>
+<p>At a high level, the tokenizer splits the input text into its constituent tokens
+by searching for specific text patterns via <a class="reference external" href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> (regexes).
+Despite their uncomplicated name, regexes are not trivial.</p>
+<blockquote>
+<div><p>The summary is that a regular expression is a special matching format.
+Alphanumeric characters are matched literally. The regex <code class="docutils literal notranslate"><span class="pre">dog</span></code> would only
+match the string <code class="docutils literal notranslate"><span class="pre">dog</span></code> literally. The power of regex from the extensive
+syntax available to fine tune the match.</p>
+<p>Adding a <code class="docutils literal notranslate"><span class="pre">*</span></code> after a character allows for zero-to-infinite occurances of
+that character. A <code class="docutils literal notranslate"><span class="pre">?</span></code> makes the preceding character optional. Square brackets
+denote a character range, i.e., select one instance of a set of characters.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dog*</span></code> would match <code class="docutils literal notranslate"><span class="pre">dog</span></code>, <code class="docutils literal notranslate"><span class="pre">doggg</span></code>, or even <code class="docutils literal notranslate"><span class="pre">dogggggggggggg</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dogs?</span></code> would match <code class="docutils literal notranslate"><span class="pre">dog</span></code> or <code class="docutils literal notranslate"><span class="pre">dogs</span></code> but NOT <code class="docutils literal notranslate"><span class="pre">dogss</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dog[a-z]</span></code> would  match <code class="docutils literal notranslate"><span class="pre">dogA</span></code>, <code class="docutils literal notranslate"><span class="pre">dogB</span></code>, <code class="docutils literal notranslate"><span class="pre">dogZ</span></code>, but not <code class="docutils literal notranslate"><span class="pre">dog0</span></code> or <code class="docutils literal notranslate"><span class="pre">dogAA</span></code></p></li>
+</ul>
+<p>Round brackets denote groups that must match entirely. <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">?</span></code> and the
+many other constructs available can apply to groups as well.</p>
+<p>To match an integer or decimal number, this (oversimplified) regex could be used:
+<code class="docutils literal notranslate"><span class="pre">[0-9]+(\.[0-9]+)?</span></code></p>
+<p>Breaking it down, it will match if:</p>
+<ul class="simple">
+<li><p>The string starts with one or more digits (<code class="docutils literal notranslate"><span class="pre">[0-9]+</span></code>)</p></li>
+<li><p>The string is terminated OR ends with:</p>
+<ul>
+<li><p>A literal dot (<code class="docutils literal notranslate"><span class="pre">\.</span></code> - as an unescaped dot matches any character),
+followed by one or more digits (<code class="docutils literal notranslate"><span class="pre">[0-9]+</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+<p>There are many more special regex constructs available, but I don’t want to be
+here all day explaining them.</p>
+</div></blockquote>
+<p>For a math expression, tokenization may look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|</span> <span class="ow">and</span> <span class="n">so</span> <span class="n">on</span><span class="o">...</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|</span>
+<span class="o">|</span> <span class="o">|</span>  <span class="o">&gt;</span> <span class="n">Left</span> <span class="n">bracket</span>
+<span class="o">|</span>  <span class="o">&gt;</span> <span class="n">Operator</span>
+ <span class="o">&gt;</span> <span class="n">Number</span>
+</pre></div>
+</div>
+<p>Or in pseudocode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">REGEX</span> <span class="o">=</span> <span class="n">NUMBER_REGEX</span> <span class="n">OR</span> <span class="n">OPERATOR_REGEX</span> <span class="n">OR</span> <span class="o">...</span>
+
+<span class="n">TokenStream</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">String</span> <span class="nb">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Token</span><span class="o">&gt;</span> <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">match</span> <span class="p">:</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="s2">&quot;Whitespace&quot;</span>
+            <span class="k">continue</span>  <span class="o">//</span> <span class="n">we</span> <span class="n">don</span><span class="s1">&#39;t care about whitespace tokens</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="s2">&quot;Unknown&quot;</span>
+            <span class="n">throw</span> <span class="n">MathParseError</span>
+
+        <span class="n">tokens</span> <span class="o">&lt;-</span> <span class="n">new</span> <span class="n">token</span> <span class="nb">object</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;match.type&quot;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">new</span> <span class="n">TokenStream</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>As shown in the code, some tokens are special. <code class="docutils literal notranslate"><span class="pre">Whitespace</span></code> tokens are produced
+(so the tokenization doesn’t crash if there is extra whitespace) but they
+are thrown away. There is an also a <code class="docutils literal notranslate"><span class="pre">Unknown</span></code> token type that is produced if
+none of the other token patterns match. If an <code class="docutils literal notranslate"><span class="pre">Unknown</span></code> token is encountered,
+raise an error.</p>
+<p>The list of tokens are stored within a <code class="docutils literal notranslate"><span class="pre">TokenStream</span></code> which is a light wrapper
+class for ease of use in the parser. Like a read-only file, the stream keeps
+track of what token is is under the “read head”. The parser can <code class="docutils literal notranslate"><span class="pre">peek()</span></code> at
+the next token without advancing or the parser can read the <code class="docutils literal notranslate"><span class="pre">next()</span></code> token
+and advance to the next token. Peeking is necessary as parsing may change
+depending on what’s the next token (e.g., did we encounter a new left bracket?)</p>
+<section id="fix-ups-error-handling">
+<h3>Fix-ups &amp; error handling<a class="headerlink" href="#fix-ups-error-handling" title="Link to this heading">¶</a></h3>
+<p>While the regexes does a good job at chunking the input into the right
+tokens, adjustments to the token list may be required.</p>
+<p>For example, the expression <code class="docutils literal notranslate"><span class="pre">2-2</span></code> will—as numbers are tokenized
+first—tokenize to a <code class="docutils literal notranslate"><span class="pre">Number(2)</span></code> followed by <code class="docutils literal notranslate"><span class="pre">Number(-2)</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tokenize</span><span class="p">(</span><span class="s2">&quot;2-2&quot;</span><span class="p">)</span>
+<span class="go">[Token(kind=&#39;Number&#39;, value=&#39;2&#39;, pos=(0, 1)),</span>
+<span class="go">  Token(kind=&#39;Number&#39;, value=&#39;-2&#39;, pos=(1, 3))]</span>
+</pre></div>
+</div>
+<p>This is evidently incorrect. The actual token stream should be <code class="docutils literal notranslate"><span class="pre">Number(2)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Operator(-)</span></code> followed by <code class="docutils literal notranslate"><span class="pre">Number(2)</span></code>.</p>
+<p>To allow for a broader range of input (without complicating the already
+confusing parser), the following adjustments will be performed:</p>
+<ol class="arabic">
+<li><p>Add a subtraction <code class="docutils literal notranslate"><span class="pre">Operator</span></code> in-between adjacent <code class="docutils literal notranslate"><span class="pre">Number</span></code> tokens
+where the second token is negative.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="mi">2</span>
+<span class="n">Original</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Number</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Fixed</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Operator</span><span class="p">(</span><span class="o">-</span><span class="p">),</span> <span class="n">Number</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add a multiplication <code class="docutils literal notranslate"><span class="pre">Operator</span></code> in-between adjacent opening and closing
+brackets.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Original</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Parenthesis</span><span class="p">,</span> <span class="n">Number</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">Parenthesis</span><span class="p">,</span> <span class="n">Parenthesis</span><span class="p">,</span> <span class="n">Number</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">Parenthesis</span>
+<span class="n">Fixed</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Parenthesis</span><span class="p">,</span> <span class="n">Number</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">Parenthesis</span><span class="p">,</span> <span class="n">Operator</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="n">Parenthesis</span><span class="p">,</span> <span class="n">Number</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">Parenthesis</span>
+</pre></div>
+</div>
+</li>
+<li><p>Replace pairs of <code class="docutils literal notranslate"><span class="pre">Number</span></code> + <code class="docutils literal notranslate"><span class="pre">Variable</span></code> tokens with <code class="docutils literal notranslate"><span class="pre">Number</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Operator(*)</span></code>, and <code class="docutils literal notranslate"><span class="pre">Variable</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span><span class="p">:</span> <span class="mi">5</span><span class="n">x</span>
+<span class="n">Original</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Number</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">Fixed</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Number</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">Operator</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>After all fix-ups have been done, if any of the following issues still
+exist, a parse error will be raised:</p>
+<ul class="simple">
+<li><p>Adjacent <code class="docutils literal notranslate"><span class="pre">Number</span></code>s</p></li>
+<li><p>Adjacent <code class="docutils literal notranslate"><span class="pre">Operator</span></code>s</p></li>
+<li><p><s>Imbalanced parenthesises</s> (likely tedious, deferred for later)</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">Operator</span></code> that is not followed by a <code class="docutils literal notranslate"><span class="pre">Number</span></code>, <code class="docutils literal notranslate"><span class="pre">Variable</span></code>,
+or opening <code class="docutils literal notranslate"><span class="pre">Parenthesis</span></code></p></li>
+<li><p>Multiple <code class="docutils literal notranslate"><span class="pre">EqualSign</span></code>s</p></li>
+</ul>
+<p>The post-processing step shall operate vaguely in this way:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For adjacent-related adjusments.</span>
+<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">stream</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span> <span class="n">match</span> <span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">expected2</span><span class="p">):</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">extra</span> <span class="n">token</span><span class="p">)</span>
+
+<span class="c1"># For multiple equal signs.</span>
+<span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ParseError</span>
+</pre></div>
+</div>
+</section>
+<section id="uml-diagram">
+<h3>UML Diagram<a class="headerlink" href="#uml-diagram" title="Link to this heading">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-6ce2cc7e9f498cea651a762ff8a3f8046f5ad51c.png" alt="&#64;startuml
+set separator none
+package math.tokenize {
+   class Span
+   class Token
+   class TokenStream
+   class Tokenizer
+}
+
+class Span {
+  -int start
+  -int end
+  +Getters()
+  +toString() : String
+}
+
+class Token {
+ -String type
+ -String value
+ -Span position
+ +Getters()
+ +toString() : String
+}
+
+Token::position ..&gt; Span : contains
+note right of Token::type
+  **Valid types**: 1) Number
+                        2) Variable
+                        3) Operator
+                        4) EqualSign
+                        5) Whitespace
+                        6) Unknown
+end note
+
+class TokenStream {
+  -ArrayList&lt;Token&gt; tokens
+  -int index
+  +Getters()
+  +peek() : Token
+  +next() : Token
+  +isOnLastToken() : boolean
+  +isExhausted() : boolean
+  +rollback(int by) : void
+  +reset() : void
+  +split(String type) : TokenStream[]
+}
+
+class Tokenizer {
+  +tokenize(String input) : TokenStream
+  -fixupTokens(ArrayList&lt;Token&gt; tokens) : ArrayList&lt;Token&gt;
+}
+
+&#64;enduml"/>
+</p>
+</section>
+</section>
+<section id="expression-parsing">
+<h2>Expression parsing<a class="headerlink" href="#expression-parsing" title="Link to this heading">¶</a></h2>
+<p>Parsing is the step that turns a list of tokens into a tree (specifically,
+an <a class="reference external" href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree</a>) that represents the math expression. The tree
+structure is important so operator precedence and parenthesizes are respected.</p>
+<p>I’m not going to even try to explain the algorithm used here. My original Python
+implementation is (probably, I can’t recall) a direct port of the Pratt parsing
+algorithm for math expressions described here:
+<a class="reference external" href="https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html">https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html</a></p>
+<p>The base Java implementation is a port of my Python port, <strong>but it has been
+extended to handle variables and equations (aka the equal sign)</strong>.</p>
+<p>Implementation-wise, there are the root <code class="docutils literal notranslate"><span class="pre">Expression</span></code> and <code class="docutils literal notranslate"><span class="pre">Parser</span></code> classes. The
+available expressions are represented using sub-classes of <code class="docutils literal notranslate"><span class="pre">Expression</span></code>.
+Expressions can be nested within each other. An <code class="docutils literal notranslate"><span class="pre">Operation</span></code> expression must
+contain two <code class="docutils literal notranslate"><span class="pre">Expression</span></code> instances (left/right sides) and a string (the
+operator).</p>
+<section id="extensions-to-my-python-port">
+<h3>Extensions to my Python port<a class="headerlink" href="#extensions-to-my-python-port" title="Link to this heading">¶</a></h3>
+<p>As stated above, the Java port needs to be extended to include support for
+variables and equations.</p>
+<p>To handle equations, if (the newly added) <code class="docutils literal notranslate"><span class="pre">EqualSign</span></code> token is found, the
+token stream shall be split into two and the two streams are parsed
+independently.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">TokenStream</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">stream</span> <span class="n">contains</span> <span class="s2">&quot;=&quot;</span><span class="p">:</span>
+        <span class="n">left_stream</span><span class="p">,</span> <span class="n">right_stream</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="n">left_expr</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">left_stream</span><span class="p">)</span>
+        <span class="n">right_expr</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">right_stream</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Equation</span><span class="p">(</span><span class="n">left_expr</span><span class="p">,</span> <span class="n">right_expr</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">stream</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">contain</span> <span class="s2">&quot;=&quot;</span>
+        <span class="c1"># &lt;perform parsing magic&gt;</span>
+</pre></div>
+</div>
+<p>To handle variables, merely a new <code class="docutils literal notranslate"><span class="pre">Variable</span></code> token type needs to be added.
+See the UML diagram for more information.</p>
+</section>
+<section id="id1">
+<h3>UML Diagram<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-8ed436488f361a6760feff1acab8357f4626326c.png" alt="&#64;startuml
+set separator none
+package math.ast {
+  class Equation
+  class Expression
+  class Number
+  class Variable
+  class Operation
+  class Group
+  class BindingPower
+  class Parser
+}
+
+class Equation {
+  -Expression left
+  -Expression right
+  +Getters/Setters()
+  +toString()
+}
+
+abstract class Expression {
+    {abstract} +toString() : String
+    -Expression parent
+    +getParent() : Expression
+    +setParent(Expression parent) : void
+}
+class Number extends Expression {
+    -double value
+    +Getters/Setters()
+}
+class Variable extends Expression {
+  -String name
+  +Getters/Setters()
+}
+class Operation extends Expression {
+    -Expression left
+    -String operator
+    -Expression right
+    +Getters/Setters()
+}
+class Group extends Expression {
+    -Expression body
+    +Getters/Setters()
+}
+
+-class BindingPower {
+    -int left
+    -int right
+    +Getters()
+}
+
+class Parser {
+    +parse(TokenStream stream) : Expression
+    -infixBindingPower(String operator) : BindingPower
+}
+' Parser::parse ..&gt; Expression : returns
+Parser ..&gt; BindingPower : uses
+
+&#64;enduml"/>
+</p>
+</section>
+</section>
+<section id="expression-evaluation">
+<h2>Expression evaluation<a class="headerlink" href="#expression-evaluation" title="Link to this heading">¶</a></h2>
+<p>As the parser ensures the AST is constructed in accordance to BEDMAS rules, it is simply
+a matter of recursively walking the AST, progressively evaluating nodes and their children
+until numbers are encountered, which allow for their parent nodes to be evaluated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Number</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">expr</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">elif</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Variable</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">variables</span><span class="p">[</span><span class="n">expr</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Group</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Operation</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">apply</span> <span class="n">expr</span><span class="o">.</span><span class="n">operator</span> <span class="n">to</span> <span class="n">left</span> <span class="n">AND</span> <span class="n">right</span>
+</pre></div>
+</div>
+<section id="id2">
+<h3>UML Diagram<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-333bb6efe28213df04de01ef85a4367ae4c40d41.png" alt="set separator none
+package math {
+  class Evaluator
+}
+
+class Evaluator {
+  +evaluate(Expression expr) : double
+}"/>
+</p>
+</section>
+</section>
+<section id="equation-solving">
+<h2>Equation solving<a class="headerlink" href="#equation-solving" title="Link to this heading">¶</a></h2>
+<div class="admonition-important admonition">
+<p class="admonition-title">Important</p>
+<p>There are certainly proper/efficient algorithms for solving equations out
+there, but I wanted to challenge myself to devise one that could handle
+basic equations. The solving functionality will consequently be quite
+limited.</p>
+</div>
+<section id="id3">
+<h3>UML Diagram<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-72a590c40fec4b34f3ccd8a897c639ecb70770c1.png" alt="set separator none
+package math.solve {
+  class Solver
+  class LinearSolver
+  class QuadraticSolver
+  class Simplifier
+}
+
+abstract class Solver {
+  {abstract} canSolve(Equation eqn) : boolean
+  {abstract} solve(Equation eqn) : boolean
+}
+class LinearSolver extends Solver {}
+class QuadraticSolver extends Solver {}
+
+class Simplifier {
+    +simplify(Expression expr) : Expression
+    +simplify(Equation eqn) : Equation
+    -simplifyNode(Expression expr) : Expression
+    -combineLikeTerms(Expression expr) : void
+    -findLikeTerms(Expression expr) : ArrayList&lt;Operation&gt;
+    -distributeTerms(Expression expr) : Expression
+}"/>
+</p>
+</section>
+<section id="final-ast-hierarchy-uml-diagram">
+<h3>Final AST Hierarchy UML Diagram<a class="headerlink" href="#final-ast-hierarchy-uml-diagram" title="Link to this heading">¶</a></h3>
+<p>I reworked the AST node hierarchy numerous times after designing the above
+hierarchy. This is approximiately the final product. I hope this helps to
+understand the spawling codebase.</p>
+<p class="plantuml">
+<img src="_images/plantuml-48b4dca80b0f3fcf0618e02efc172046c8cfe6ae.png" alt="abstract class Node {
+    +{abstract} toString() : String
+    +{abstract} equals() : boolean
+    +{abstract} deepcopy() : Node
+}
+abstract class RootNode implements Node {}
+interface ParentNode {}
+
+class Expression extends RootNode implements ParentNode {
+    -ExprNode body
+    +Getters/Setters()
+}
+class Equation extends RootNode implements ParentNode {
+    -ExprNode left
+    -ExprNode right
+    +Getters/Setters()
+    +replaceSide(ExprNode side, ExprNode replacement) : void
+}
+
+abstract class ExprNode implements Node {
+    -ParentNode parent
+    +Getters/Setters()
+}
+class Number extends ExprNode {
+    -double value
+    +Getters/Setters
+}
+class Variable extends ExprNode {
+    -String name
+    +Getters/Setters()
+}
+class Group extends ExprNode implements ParentNode {
+    -ExprNode body
+}
+class Operation extends ExprNode implements ParentNode {
+    -ExprNode left
+    -String operator
+    -ExprNode right
+    +Getters/Setters()
+    +replaceOperand(ExprNode operand, ExprNode replacement) : void
+    +is(String... operators) : boolean
+}"/>
+</p>
+</section>
+<section id="linear-single-variable-solving">
+<h3>Linear single variable solving<a class="headerlink" href="#linear-single-variable-solving" title="Link to this heading">¶</a></h3>
+<p>To solve linear single variable equations, the calculator needs to be taught
+a handful of elementary solving techniques. To start, the solver will be able
+to perform:</p>
+<ul class="simple">
+<li><p>Inverse operations</p></li>
+<li><p>Collection of like terms</p></li>
+<li><p><s>Distribution</s> (likely difficult, deferred for later)</p></li>
+<li><p><s>Expansion</s> (likely difficult, deferred for later)</p></li>
+</ul>
+<p>These actions will be then applied in a loop until the variable is isolated
+on one side.</p>
+<p>For expressions containing brackets, the workaround is to aggressively
+simplify the expression. Once there are no brackets left, the equation can
+be solved as described above. If brackets still remain after simplification,
+then solving those is left as a reach goal.</p>
+<p>It’s easier to explain the algorithm using an activity diagram than with
+pseudocode.</p>
+<p class="plantuml">
+<img src="_images/plantuml-ffb986e4fa5a576925fbb2f4f98c9242133daecc.png" alt="start
+while (Left/right side can be simplified?)
+  :Simplify side;
+  fork
+    :Collect like terms;
+  fork again
+    :Expand;
+  fork again
+    :Distribute;
+  endfork
+endwhile
+
+while (Is variable isolated?) is (no)
+  :Apply inverse operation;
+endwhile
+
+:Return variable = &lt;value&gt;;
+stop"/>
+</p>
+</section>
+<section id="detour-simplification">
+<h3>Detour: Simplification<a class="headerlink" href="#detour-simplification" title="Link to this heading">¶</a></h3>
+<p>To make the solver’s life easier, the equation will be simplified as
+much as possible. The goal to only have a handful of operations on the
+side with the variable.</p>
+<p>As mentioned earlier, the simplifier should ideally be able to:</p>
+<ul class="simple">
+<li><p>Fold operations with constant operands (i.e., a constant answer)</p></li>
+<li><p>Collect like terms (add/subtract, consecutive multiplication)</p></li>
+<li><p>Distribute a term over brackets</p></li>
+<li><p><s>Expansion</s> (likely difficult, deferred for later)</p></li>
+</ul>
+<p>The first two parts of the simplification logic will broadly look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">simplify_node</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expression</span><span class="p">):</span>
+    <span class="c1"># Returns a simplified version of expr if possible.</span>
+
+    <span class="c1"># Walk expression AST recursively for operations that contains</span>
+    <span class="c1"># constant operands. Matching operations are replaced with</span>
+    <span class="c1"># number nodes.</span>
+    <span class="k">if</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Operation</span><span class="p">:</span>
+        <span class="n">simplify</span> <span class="n">operation</span><span class="o">.</span><span class="n">left</span>
+        <span class="n">simplify</span> <span class="n">operation</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">if</span> <span class="n">expr</span> <span class="n">contains</span> <span class="n">only</span> <span class="n">constant</span> <span class="n">operands</span><span class="p">:</span>
+            <span class="c1"># Replace this expression with a number node.</span>
+            <span class="k">return</span> <span class="n">Number</span><span class="p">(</span><span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Group</span>
+        <span class="n">simplify</span> <span class="n">group</span><span class="o">.</span><span class="n">body</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">body</span> <span class="ow">is</span> <span class="n">Number</span> <span class="n">OR</span> <span class="n">Variable</span><span class="p">:</span>
+            <span class="c1"># Eliminate the group as it simplifies down to a constant.</span>
+            <span class="k">return</span> <span class="n">group</span><span class="o">.</span><span class="n">body</span>
+
+    <span class="n">combine_like_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">expr</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_like_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expression</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Group</span><span class="p">:</span>
+        <span class="c1"># We&#39;re combining terms within brackets, but we don&#39;t care</span>
+        <span class="c1"># about the brackets specifically.</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">body</span>
+
+    <span class="c1"># Addition/subtraction are associative, thus we can collect and</span>
+    <span class="c1"># fold their constant operands into a single Number.</span>
+    <span class="n">like_terms</span> <span class="o">=</span> <span class="n">find_like_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+    <span class="n">first_number</span> <span class="o">=</span> <span class="n">get_number_node</span> <span class="n">of</span> <span class="n">like_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">term_operation</span> <span class="ow">in</span> <span class="n">like_terms</span><span class="p">:</span>
+        <span class="n">number_node</span> <span class="o">=</span> <span class="n">get_number_node</span> <span class="n">of</span> <span class="n">term_operation</span>
+        <span class="n">first_number</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">number_node</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">number_node</span><span class="o">.</span><span class="n">removeFromAST</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_like_terms</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expression</span><span class="p">):</span>
+    <span class="c1"># Look for operations which have one constant operand.</span>
+    <span class="n">add_subtract_terms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Operation</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">operation</span> <span class="ow">is</span> <span class="n">ADD</span> <span class="ow">or</span> <span class="n">SUB</span><span class="p">:</span>
+        <span class="n">add_subtract_terms</span> <span class="o">+=</span> <span class="n">find_like_terms</span> <span class="n">of</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span> <span class="n">AND</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span>
+        <span class="n">add_subtract_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr</span> <span class="n">constant</span> <span class="n">operand</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">expr</span> <span class="ow">is</span> <span class="n">Group</span>
+        <span class="c1"># Within brackets, thus terms cannot be combined so don&#39;t</span>
+        <span class="c1"># even look for candidate terms.</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</section>
+<section id="detour-ast-modification-tooling">
+<h3>Detour: AST modification tooling<a class="headerlink" href="#detour-ast-modification-tooling" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">replaceNode</span><span class="p">(</span><span class="n">original</span><span class="p">:</span> <span class="n">ExprNode</span><span class="p">,</span> <span class="n">replacement</span><span class="p">:</span> <span class="n">ExprNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace a expression node in the AST with a new node.</span>
+<span class="sd">    The replaced node must be a child node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">replacement</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">original</span>
+
+    <span class="k">if</span> <span class="n">origin</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="p">(</span><span class="n">Group</span> <span class="ow">or</span> <span class="n">Expression</span><span class="p">):</span>
+        <span class="n">origin</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">replacement</span>
+    <span class="k">elif</span> <span class="n">origin</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="p">(</span><span class="n">Operation</span><span class="p">,</span> <span class="n">Equation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">original</span> <span class="ow">is</span> <span class="n">original</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>
+            <span class="n">origin</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">replacement</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">origin</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">replacement</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">removeNode</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">ExprNode</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="n">Equation</span><span class="p">:</span>
+        <span class="c1"># replace the target equation side with Number(0)</span>
+    <span class="k">elif</span> <span class="n">parent</span> <span class="ow">is</span> <span class="n">Expression</span><span class="p">:</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">parent</span> <span class="ow">is</span> <span class="n">Group</span><span class="p">:</span>
+        <span class="c1"># The parent group will be empty so remove it outright.</span>
+        <span class="n">removeNode</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">parent</span> <span class="ow">is</span> <span class="n">Operation</span><span class="p">:</span>
+        <span class="n">is_left_operand</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span> <span class="ow">is</span> <span class="n">parent</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_left_operand</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="p">(</span><span class="n">ADD</span> <span class="ow">or</span> <span class="n">MULTIPLY</span><span class="p">):</span>
+                <span class="c1"># They&#39;re associative so it&#39;s safe to replace the</span>
+                <span class="c1"># parent operation with its right operand.</span>
+                <span class="n">replaceNode</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">parent</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">parent</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="n">SUBTRACT</span><span class="p">:</span>
+                <span class="c1"># The right operand needs to remain negative, so</span>
+                <span class="c1"># update the operation to multiply the RHS by -1.</span>
+                <span class="n">replaceNode</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Number</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">parent</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">MULTIPLY</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;removing LHS of division is unsupported&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The RHS of any operation can be easily removed.</span>
+            <span class="n">replaceNode</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">parent</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="back-to-linear-solving">
+<h3>Back to linear solving<a class="headerlink" href="#back-to-linear-solving" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">canSolve</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expression</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">countVariables</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">expr</span><span class="o">.</span><span class="n">countVariables</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># walk AST and keep track of the highest degree variable</span>
+    <span class="n">highestDegree</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">walkAST</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">node</span> <span class="ow">is</span> <span class="n">Operation</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="s2">&quot;^&quot;</span>
+            <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="n">Variable</span>
+            <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="n">Number</span>
+            <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span> <span class="o">&gt;</span> <span class="n">highestDegree</span>
+        <span class="p">):</span>
+            <span class="n">highestDegree</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">right</span>
+        <span class="n">walkAST</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+    <span class="p">}(</span><span class="n">expr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">highestDegree</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">containsVariable</span><span class="p">()</span> <span class="ow">and</span> <span class="n">expr</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">containsVariable</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="n">eqn</span><span class="p">:</span> <span class="n">Equation</span><span class="p">):</span>
+    <span class="c1"># This assumes the variable term will always be on the left side.</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">eqn</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Variable</span><span class="p">):</span>
+        <span class="c1"># Apply inverse operation</span>
+        <span class="n">eqn</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">if</span> <span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="n">ADD</span> <span class="ow">or</span> <span class="n">SUBTRACT</span><span class="p">:</span>
+            <span class="n">inverseValue</span> <span class="o">=</span> <span class="o">-</span><span class="n">getConstantValue</span><span class="p">(</span><span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="n">SUBTRACT</span>
+                <span class="ow">and</span> <span class="n">inverseValue</span> <span class="ow">is</span> <span class="n">LEFT</span> <span class="n">of</span> <span class="n">eqn</span><span class="o">.</span><span class="n">left</span>
+            <span class="p">):</span>
+                <span class="c1"># Constant operand is really negative, so change the</span>
+                <span class="c1"># inverse value back to positive.</span>
+                <span class="n">inverseValue</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">eqn</span><span class="o">.</span><span class="n">right</span> <span class="o">+=</span> <span class="n">inverseValue</span>
+        <span class="k">elif</span> <span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="n">MULTIPLY</span><span class="p">:</span>
+            <span class="n">inverseValue</span> <span class="o">=</span> <span class="n">getConstantValue</span><span class="p">(</span><span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">eqn</span><span class="o">.</span><span class="n">right</span> <span class="o">/=</span> <span class="n">inverseValue</span>
+        <span class="k">elif</span> <span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="n">DIVIDE</span><span class="p">:</span>
+            <span class="c1"># Assume that we aren&#39;t dividing by a variable.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">right</span> <span class="ow">is</span> <span class="n">Variable</span><span class="p">):</span> <span class="k">raise</span> <span class="n">Error</span><span class="p">()</span>
+            <span class="n">inverseValue</span> <span class="o">=</span> <span class="n">eqn</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">right</span>
+            <span class="n">eqn</span><span class="o">.</span><span class="n">right</span> <span class="o">*=</span> <span class="n">inverseValue</span>
+
+    <span class="c1"># The variable is isolated on the left, we&#39;re done! 🎉</span>
+    <span class="k">return</span> <span class="n">eqn</span><span class="o">.</span><span class="n">right</span>
+</pre></div>
+</div>
+</section>
+<section id="quadratic-single-variable-solving">
+<h3>Quadratic single variable solving<a class="headerlink" href="#quadratic-single-variable-solving" title="Link to this heading">¶</a></h3>
+<p>TBD.</p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+
+        <div class="related-pages">
+          <a class="next-page" href="gui.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Implementation Notes: runthenumbers.gui</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+
+                <div class="title">Home</div>
+
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; The pip developers
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+
+          </div>
+          <div class="right-details">
+
+          </div>
+        </div>
+
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+
+
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Implementation Notes: runthenumbers.math</a><ul>
+<li><a class="reference internal" href="#expression-tokenization">Expression tokenization</a><ul>
+<li><a class="reference internal" href="#fix-ups-error-handling">Fix-ups &amp; error handling</a></li>
+<li><a class="reference internal" href="#uml-diagram">UML Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#expression-parsing">Expression parsing</a><ul>
+<li><a class="reference internal" href="#extensions-to-my-python-port">Extensions to my Python port</a></li>
+<li><a class="reference internal" href="#id1">UML Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#expression-evaluation">Expression evaluation</a><ul>
+<li><a class="reference internal" href="#id2">UML Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#equation-solving">Equation solving</a><ul>
+<li><a class="reference internal" href="#id3">UML Diagram</a></li>
+<li><a class="reference internal" href="#final-ast-hierarchy-uml-diagram">Final AST Hierarchy UML Diagram</a></li>
+<li><a class="reference internal" href="#linear-single-variable-solving">Linear single variable solving</a></li>
+<li><a class="reference internal" href="#detour-simplification">Detour: Simplification</a></li>
+<li><a class="reference internal" href="#detour-ast-modification-tooling">Detour: AST modification tooling</a></li>
+<li><a class="reference internal" href="#back-to-linear-solving">Back to linear solving</a></li>
+<li><a class="reference internal" href="#quadratic-single-variable-solving">Quadratic single variable solving</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+
+
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=09d090fc"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

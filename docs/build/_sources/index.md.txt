@@ -1,0 +1,6 @@
+# RunTheNumbers
+
+```{toctree}
+math
+gui
+```
